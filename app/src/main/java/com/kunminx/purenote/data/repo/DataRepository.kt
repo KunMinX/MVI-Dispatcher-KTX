@@ -17,7 +17,7 @@ class DataRepository private constructor() {
 
   fun getNotes(result: (dataResult: DataResult<MutableList<Note>>) -> Unit) {
     AsyncTask.doAction({
-      dataBase.noteDao().notes
+      dataBase.noteDao().notes()
     }) { notes -> result.invoke(DataResult(notes)) }
   }
 
