@@ -1,37 +1,9 @@
 package com.kunminx.architecture.utils
 
-import androidx.appcompat.app.AppCompatActivity
-import com.kunminx.architecture.ui.scope.ViewModelScope
 import android.annotation.SuppressLint
-import android.os.Bundle
-import com.kunminx.architecture.ui.page.BaseActivity
-import com.kunminx.architecture.utils.AdaptScreenUtils
-import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.view.WindowManager
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.viewbinding.ViewBinding
-import androidx.recyclerview.widget.RecyclerView
-import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
-import androidx.viewpager.widget.PagerAdapter
-import com.kunminx.architecture.data.response.AsyncTask.ActionStart
-import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.ObservableEmitter
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import com.kunminx.architecture.data.response.DataResult
-import com.kunminx.architecture.data.response.ResultSource
 import androidx.core.content.FileProvider
-import android.widget.Toast
-import android.util.DisplayMetrics
-import java.lang.NullPointerException
-import java.lang.UnsupportedOperationException
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -62,29 +34,21 @@ class Utils private constructor() {
 
     fun init(app: Application?) {
       if (sApplication == null) {
-        if (app == null) {
-          sApplication = applicationByReflect
-        } else {
-          sApplication = app
-        }
-      } else {
-        if (app != null && app.javaClass != sApplication!!.javaClass) {
-          sApplication = app
-        }
+        if (app == null) sApplication = applicationByReflect else sApplication = app
+      } else if (app != null && app.javaClass != sApplication!!.javaClass) {
+        sApplication = app
       }
     }
 
     val app: Application?
       get() {
-        if (sApplication != null) {
-          return sApplication
-        }
+        if (sApplication != null) return sApplication
         val app = applicationByReflect
         init(app)
         return app
       }
     private val applicationByReflect: Application
-      private get() {
+      get() {
         try {
           @SuppressLint("PrivateApi") val activityThread =
             Class.forName("android.app.ActivityThread")

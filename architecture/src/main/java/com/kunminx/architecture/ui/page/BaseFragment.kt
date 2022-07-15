@@ -15,41 +15,22 @@
  */
 package com.kunminx.architecture.ui.page
 
-import androidx.appcompat.app.AppCompatActivity
-import com.kunminx.architecture.ui.scope.ViewModelScope
-import android.annotation.SuppressLint
-import android.os.Bundle
-import com.kunminx.architecture.ui.page.BaseActivity
-import com.kunminx.architecture.utils.AdaptScreenUtils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.view.WindowManager
+import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.viewbinding.ViewBinding
-import androidx.recyclerview.widget.RecyclerView
-import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
-import androidx.viewpager.widget.PagerAdapter
-import com.kunminx.architecture.data.response.AsyncTask.ActionStart
-import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.ObservableEmitter
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import com.kunminx.architecture.data.response.DataResult
-import com.kunminx.architecture.data.response.ResultSource
-import androidx.core.content.FileProvider
-import android.widget.Toast
-import android.util.DisplayMetrics
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import com.kunminx.architecture.ui.scope.ViewModelScope
 
 /**
  * Create by KunMinX at 19/7/11
@@ -62,6 +43,7 @@ abstract class BaseFragment : Fragment() {
   protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
+
   override fun onAttach(context: Context) {
     super.onAttach(context)
     mActivity = context as AppCompatActivity
@@ -120,8 +102,7 @@ abstract class BaseFragment : Fragment() {
     startActivity(intent)
   }
 
-  protected val appContext: Context
-    protected get() = mActivity!!.applicationContext
+  protected val appContext: Context get() = mActivity!!.applicationContext
 
   private fun addOnBackPressed() {
     requireActivity().onBackPressedDispatcher.addCallback(

@@ -15,40 +15,20 @@
  */
 package com.kunminx.architecture.ui.page
 
-import androidx.appcompat.app.AppCompatActivity
-import com.kunminx.architecture.ui.scope.ViewModelScope
 import android.annotation.SuppressLint
-import android.os.Bundle
-import com.kunminx.architecture.ui.page.BaseActivity
-import com.kunminx.architecture.utils.AdaptScreenUtils
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
-import android.view.WindowManager
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.viewbinding.ViewBinding
-import androidx.recyclerview.widget.RecyclerView
-import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
-import androidx.viewpager.widget.PagerAdapter
-import com.kunminx.architecture.data.response.AsyncTask.ActionStart
-import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.ObservableEmitter
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
-import com.kunminx.architecture.data.response.DataResult
-import com.kunminx.architecture.data.response.ResultSource
-import androidx.core.content.FileProvider
-import android.widget.Toast
-import android.util.DisplayMetrics
+import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
+import com.kunminx.architecture.ui.scope.ViewModelScope
+import com.kunminx.architecture.utils.AdaptScreenUtils
 import com.kunminx.architecture.utils.Utils
 
 /**
@@ -61,6 +41,7 @@ abstract class BaseActivity : AppCompatActivity() {
   protected fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
+
   @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
     transparentStatusBar(this)
@@ -86,8 +67,7 @@ abstract class BaseActivity : AppCompatActivity() {
   }
 
   override fun getResources(): Resources {
-    return if (Utils.Companion.getApp().getResources()
-        .getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT
+    return if (Utils.app!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
     ) {
       AdaptScreenUtils.adaptWidth(super.getResources(), 360)
     } else {
