@@ -14,28 +14,19 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Parcelize
 data class Note(
-  @JvmField
   @PrimaryKey
   var id: String = "",
-
-  @JvmField
   var title: String? = "",
-
-  @JvmField
   var content: String? = "",
-
-  @JvmField
   @ColumnInfo(name = "create_time")
   var createTime: Long = 0,
-
-  @JvmField
   @ColumnInfo(name = "modify_time")
   var modifyTime: Long = 0,
-
-  @JvmField
   var type: Int = 0,
+) : Parcelable {
 
-  ) : Parcelable {
+  @Ignore
+  constructor() : this("")
 
   @get:Ignore
   val createDate: String

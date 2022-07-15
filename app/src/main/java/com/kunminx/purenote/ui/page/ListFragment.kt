@@ -44,11 +44,12 @@ class ListFragment : BaseFragment() {
     }
     noteRequester.output(this) { noteEvent ->
       when (noteEvent) {
-        is NoteEvent.ToppingItem, is NoteEvent.GetNoteList -> {
-          states.list = NoteEvent.GetNoteList().notes!!
+        is NoteEvent.GetNoteList -> {
+          states.list = noteEvent.notes!!.toMutableList()
           adapter.setData(states.list)
           binding.ivEmpty.visibility = if (states.list.isEmpty()) View.VISIBLE else View.GONE
         }
+        is NoteEvent.ToppingItem -> {}
         is NoteEvent.MarkItem -> {}
         is NoteEvent.RemoveItem -> {}
         else -> {}

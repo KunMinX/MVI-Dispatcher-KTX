@@ -2,6 +2,7 @@ package com.kunminx.purenote.data.repo
 
 import androidx.room.*
 import com.kunminx.purenote.data.bean.Note
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Create by KunMinX at 2022/6/14
@@ -9,14 +10,14 @@ import com.kunminx.purenote.data.bean.Note
 @Dao
 interface NoteDao {
   @Query("select * from note order by type & 0x0001 = 0x0001 desc, modify_time desc")
-  suspend fun notes(): MutableList<Note>
+  fun notes(): Flow<List<Note>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertNote(note: Note)
+  fun insertNote(note: Note)
 
   @Update
-  suspend fun updateNote(note: Note)
+  fun updateNote(note: Note)
 
   @Delete
-  suspend fun deleteNote(note: Note)
+  fun deleteNote(note: Note)
 }

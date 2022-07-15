@@ -3,8 +3,7 @@ package com.kunminx.purenote.data.repo
 import androidx.room.Room
 import com.kunminx.architecture.utils.Utils
 import com.kunminx.purenote.data.bean.Note
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Create by KunMinX at 2022/6/14
@@ -15,32 +14,22 @@ class DataRepository private constructor() {
     NoteDataBase::class.java, DATABASE_NAME
   ).build()
 
-  suspend fun getNotes(): MutableList<Note> {
-    val notes: MutableList<Note>
-    withContext(Dispatchers.IO) {
-      notes = dataBase.noteDao().notes()
-    }
-    return notes;
+  fun getNotes(): Flow<List<Note>> {
+    return dataBase.noteDao().notes()
   }
 
   suspend fun insertNote(note: Note): Boolean {
-    withContext(Dispatchers.IO) {
-      dataBase.noteDao().insertNote(note)
-    }
+    dataBase.noteDao().insertNote(note)
     return true
   }
 
   suspend fun updateNote(note: Note): Boolean {
-    withContext(Dispatchers.IO) {
-      dataBase.noteDao().updateNote(note)
-    }
+    dataBase.noteDao().updateNote(note)
     return true
   }
 
   suspend fun deleteNote(note: Note): Boolean {
-    withContext(Dispatchers.IO) {
-      dataBase.noteDao().deleteNote(note)
-    }
+    dataBase.noteDao().deleteNote(note)
     return true
   }
 
