@@ -39,7 +39,10 @@ class EditorFragment : BaseFragment() {
       states.tempNote = requireArguments().getParcelable(NOTE)!!
       states.title = states.tempNote.title!!
       states.content = states.tempNote.content!!
-      if (!TextUtils.isEmpty(states.tempNote.id)) {
+      if (TextUtils.isEmpty(states.tempNote.id)) {
+        binding.etTitle.requestFocus()
+        binding.etTitle.post { toggleSoftInput() }
+      } else {
         binding.etTitle.setText(states.tempNote.title)
         binding.etContent.setText(states.tempNote.content)
         binding.tvTitle.text = getString(R.string.last_time_modify)
@@ -70,14 +73,13 @@ class EditorFragment : BaseFragment() {
     binding.btnBack.setOnClickListener { save() }
   }
 
-  private fun save() {
+  private fun save(): Boolean {
     states.tempNote.title = Objects.requireNonNull(binding.etTitle.text).toString()
     states.tempNote.content = Objects.requireNonNull(binding.etContent.text).toString()
     if (TextUtils.isEmpty(states.tempNote.title) && TextUtils.isEmpty(states.tempNote.content)
       || states.tempNote.title == states.title && states.tempNote.content == states.content
     ) {
-      nav().navigateUp()
-      return
+      return nav().navigateUp()
     }
     val time = System.currentTimeMillis()
     if (TextUtils.isEmpty(states.tempNote.id)) {
@@ -86,11 +88,11 @@ class EditorFragment : BaseFragment() {
     }
     states.tempNote.modifyTime = time
     noteRequester.input(NoteEvent(NoteEvent.EVENT_ADD_ITEM).setNote(states.tempNote))
+    return true
   }
 
   override fun onBackPressed(): Boolean {
-    save()
-    return super.onBackPressed()
+    return save()
   }
 
   class EditorViewModel : ViewModel() {
