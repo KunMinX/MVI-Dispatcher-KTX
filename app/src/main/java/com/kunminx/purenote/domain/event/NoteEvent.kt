@@ -6,8 +6,8 @@ import com.kunminx.purenote.data.bean.Note
 /**
  * Create by KunMinX at 2022/6/16
  */
-class NoteEvent(eventId: Int) : Event<NoteEvent.Param?, NoteEvent.Result?>() {
-  fun setNote(note: Note?): NoteEvent {
+class NoteEvent(eventId: Int) : Event<NoteEvent.Param, NoteEvent.Result>() {
+  fun setNote(note: Note): NoteEvent {
     param!!.note = note
     return this
   }

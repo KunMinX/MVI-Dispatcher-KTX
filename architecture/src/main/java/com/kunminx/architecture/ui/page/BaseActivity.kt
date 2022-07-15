@@ -26,8 +26,6 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import com.kunminx.architecture.ui.scope.ViewModelScope
 import com.kunminx.architecture.utils.AdaptScreenUtils
 import com.kunminx.architecture.utils.Utils
 
@@ -35,8 +33,6 @@ import com.kunminx.architecture.utils.Utils
  * Create by KunMinX at 19/8/1
  */
 abstract class BaseActivity : AppCompatActivity() {
-  private val mViewModelScope = ViewModelScope()
-  protected abstract fun onInitViewModel()
   protected abstract fun onInitView()
   protected fun onInitData() {}
   protected open fun onOutput() {}
@@ -46,29 +42,14 @@ abstract class BaseActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     transparentStatusBar(this)
     super.onCreate(savedInstanceState)
-    onInitViewModel()
     onInitView()
     onInitData()
     onOutput()
     onInput()
   }
 
-  //TODO tip 2: Jetpack 通过 "工厂模式" 实现 ViewModel 作用域可控，
-  //目前我们在项目中提供了 Application、Activity、Fragment 三个级别的作用域，
-  //值得注意的是，通过不同作用域 Provider 获得 ViewModel 实例非同一个，
-  //故若 ViewModel 状态信息保留不符合预期，可从该角度出发排查 是否眼前 ViewModel 实例非目标实例所致。
-  //如这么说无体会，详见 https://xiaozhuanlan.com/topic/6257931840
-  protected fun <T : ViewModel?> getActivityScopeViewModel(modelClass: Class<T>): T {
-    return mViewModelScope.getActivityScopeViewModel(this, modelClass)
-  }
-
-  protected fun <T : ViewModel?> getApplicationScopeViewModel(modelClass: Class<T>): T {
-    return mViewModelScope.getApplicationScopeViewModel(modelClass)
-  }
-
   override fun getResources(): Resources {
-    return if (Utils.app!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-    ) {
+    return if (Utils.app!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
       AdaptScreenUtils.adaptWidth(super.getResources(), 360)
     } else {
       AdaptScreenUtils.adaptHeight(super.getResources(), 640)

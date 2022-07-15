@@ -5,7 +5,7 @@ import com.kunminx.architecture.domain.event.Event
 /**
  * Create by KunMinX at 2022/6/16
  */
-class Messages(eventId: Int) : Event<Messages.Param?, Messages.Result?>() {
+class Messages(eventId: Int) : Event<Messages.Param, Messages.Result>() {
   class Param
   class Result
   companion object {

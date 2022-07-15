@@ -16,6 +16,7 @@
 package com.kunminx.architecture.ui.page
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -27,31 +28,36 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.kunminx.architecture.ui.scope.ViewModelScope
+import androidx.viewbinding.ViewBinding
+import androidx.viewbinding.ViewBindings
 
 /**
  * Create by KunMinX at 19/7/11
  */
-abstract class BaseFragment : Fragment() {
-  private val mViewModelScope = ViewModelScope()
-  protected var mActivity: AppCompatActivity? = null
-  protected abstract fun onInitViewModel()
+abstract class BaseFragment: Fragment() {
+  protected val mActivity by lazy { context as AppCompatActivity }
   protected abstract fun onInitView(inflater: LayoutInflater, container: ViewGroup?): View?
   protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
 
-  override fun onAttach(context: Context) {
-    super.onAttach(context)
-    mActivity = context as AppCompatActivity
+  inline fun <reified VB : ViewBinding> Activity.inflate() = lazy {
+    inflateBinding<VB>(layoutInflater).apply { setContentView(root) }
   }
+
+  inline fun <reified VB : ViewBinding> Dialog.inflate() = lazy {
+    inflateBinding<VB>(layoutInflater).apply { setContentView(root) }
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  inline fun <reified VB : ViewBinding> inflateBinding(layoutInflater: LayoutInflater) =
+    VB::class.java.getMethod("inflate", LayoutInflater::class.java).invoke(null, layoutInflater) as VB
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    onInitViewModel()
     addOnBackPressed()
   }
 
@@ -60,6 +66,7 @@ abstract class BaseFragment : Fragment() {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
+
     return onInitView(inflater, container)
   }
 
@@ -70,29 +77,12 @@ abstract class BaseFragment : Fragment() {
     onInput()
   }
 
-  //TODO tip 2: Jetpack 通过 "工厂模式" 实现 ViewModel 作用域可控，
-  //目前我们在项目中提供了 Application、Activity、Fragment 三个级别的作用域，
-  //值得注意的是，通过不同作用域 Provider 获得 ViewModel 实例非同一个，
-  //故若 ViewModel 状态信息保留不符合预期，可从该角度出发排查 是否眼前 ViewModel 实例非目标实例所致。
-  //如这么说无体会，详见 https://xiaozhuanlan.com/topic/6257931840
-  protected fun <T : ViewModel?> getFragmentScopeViewModel(modelClass: Class<T>): T {
-    return mViewModelScope.getFragmentScopeViewModel(this, modelClass)
-  }
-
-  protected fun <T : ViewModel?> getActivityScopeViewModel(modelClass: Class<T>): T {
-    return mViewModelScope.getActivityScopeViewModel(mActivity!!, modelClass)
-  }
-
-  protected fun <T : ViewModel?> getApplicationScopeViewModel(modelClass: Class<T>): T {
-    return mViewModelScope.getApplicationScopeViewModel(modelClass)
-  }
-
   protected fun nav(): NavController {
     return NavHostFragment.findNavController(this)
   }
 
   protected fun toggleSoftInput() {
-    val imm = mActivity!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    val imm = mActivity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
   }
 
@@ -102,7 +92,7 @@ abstract class BaseFragment : Fragment() {
     startActivity(intent)
   }
 
-  protected val appContext: Context get() = mActivity!!.applicationContext
+  protected val appContext: Context get() = mActivity.applicationContext
 
   private fun addOnBackPressed() {
     requireActivity().onBackPressedDispatcher.addCallback(
