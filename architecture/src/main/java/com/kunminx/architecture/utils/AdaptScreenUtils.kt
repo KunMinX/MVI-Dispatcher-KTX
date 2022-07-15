@@ -1,5 +1,6 @@
 package com.kunminx.architecture.utils
 
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.util.Log
@@ -30,6 +31,14 @@ object AdaptScreenUtils {
     val newXdpi = dm.xdpi
     setAppDmXdpi(newXdpi)
     return resources
+  }
+
+  fun getAdaptResult(): Resources {
+    return if (Utils.app!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+      adaptWidth(Utils.app!!.resources, 360)
+    } else {
+      adaptHeight(Utils.app!!.resources, 640)
+    }
   }
 
   private fun setAppDmXdpi(xdpi: Float) {

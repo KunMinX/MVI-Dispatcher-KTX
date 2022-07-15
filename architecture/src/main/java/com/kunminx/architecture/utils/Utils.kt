@@ -3,7 +3,6 @@ package com.kunminx.architecture.utils
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import androidx.core.content.FileProvider
 import java.lang.reflect.InvocationTargetException
 
 /**
@@ -14,13 +13,6 @@ import java.lang.reflect.InvocationTargetException
 </pre> *
  */
 class Utils private constructor() {
-  class FileProvider4UtilCode : FileProvider() {
-    override fun onCreate(): Boolean {
-      init(context)
-      return true
-    }
-  }
-
   companion object {
     @SuppressLint("StaticFieldLeak")
     private var sApplication: Application? = null

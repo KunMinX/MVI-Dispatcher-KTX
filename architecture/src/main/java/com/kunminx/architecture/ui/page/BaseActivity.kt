@@ -18,7 +18,6 @@ package com.kunminx.architecture.ui.page
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
@@ -27,7 +26,6 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import com.kunminx.architecture.utils.AdaptScreenUtils
-import com.kunminx.architecture.utils.Utils
 
 /**
  * Create by KunMinX at 19/8/1
@@ -49,11 +47,7 @@ abstract class BaseActivity : AppCompatActivity() {
   }
 
   override fun getResources(): Resources {
-    return if (Utils.app!!.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-      AdaptScreenUtils.adaptWidth(super.getResources(), 360)
-    } else {
-      AdaptScreenUtils.adaptHeight(super.getResources(), 640)
-    }
+    return AdaptScreenUtils.getAdaptResult()
   }
 
   protected fun toggleSoftInput() {
