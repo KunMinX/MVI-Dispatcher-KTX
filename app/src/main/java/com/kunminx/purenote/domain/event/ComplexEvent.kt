@@ -1,29 +1,11 @@
 package com.kunminx.purenote.domain.event
 
-import com.kunminx.architecture.domain.event.Event
-
 /**
  * Create by KunMinX at 2022/6/16
  */
-class ComplexEvent(eventId: Int) : Event<ComplexEvent.Param?, ComplexEvent.Result?>() {
-  class Param {
-    var count: Long = 0
-  }
-
-  class Result {
-    var count: Long = 0
-  }
-
-  companion object {
-    const val EVENT_TEST_1 = 1
-    const val EVENT_TEST_2 = 2
-    const val EVENT_TEST_3 = 3
-    const val EVENT_TEST_4 = 4
-  }
-
-  init {
-    this.eventId = eventId
-    param = Param()
-    result = Result()
-  }
+sealed class ComplexEvent(var _count: Int = 0) {
+  data class ResultTest1(var count: Int = 0) : ComplexEvent()
+  data class ResultTest2(var count: Int = 0) : ComplexEvent()
+  data class ResultTest3(var count: Int = 0) : ComplexEvent()
+  data class ResultTest4(var count: Int = 0) : ComplexEvent()
 }

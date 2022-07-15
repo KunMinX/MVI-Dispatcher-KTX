@@ -38,19 +38,20 @@ class ListFragment : BaseFragment() {
    */
   override fun onOutput() {
     messenger.output(this) { messages ->
-      if (messages.eventId == Messages.EVENT_REFRESH_NOTE_LIST) {
-        noteRequester.input(NoteEvent(NoteEvent.EVENT_GET_NOTE_LIST))
+      if (messages is Messages.RefreshNoteList) {
+        noteRequester.input(NoteEvent.GetNoteList())
       }
     }
     noteRequester.output(this) { noteEvent ->
-      when (noteEvent.eventId) {
-        NoteEvent.EVENT_TOPPING_ITEM, NoteEvent.EVENT_GET_NOTE_LIST -> {
-          states.list = noteEvent.result?.notes!!
+      when (noteEvent) {
+        is NoteEvent.ToppingItem, is NoteEvent.GetNoteList -> {
+          states.list = NoteEvent.GetNoteList().notes!!
           adapter.setData(states.list)
           binding.ivEmpty.visibility = if (states.list.isEmpty()) View.VISIBLE else View.GONE
         }
-        NoteEvent.EVENT_MARK_ITEM -> {}
-        NoteEvent.EVENT_REMOVE_ITEM -> {}
+        is NoteEvent.MarkItem -> {}
+        is NoteEvent.RemoveItem -> {}
+        else -> {}
       }
     }
   }
@@ -62,18 +63,30 @@ class ListFragment : BaseFragment() {
   override fun onInput() {
     adapter.setListener { viewId, position, item ->
       when (viewId) {
-        R.id.btn_mark -> noteRequester.input(NoteEvent(NoteEvent.EVENT_MARK_ITEM).setNote(item))
-        R.id.btn_topping -> noteRequester.input(NoteEvent(NoteEvent.EVENT_TOPPING_ITEM).setNote(item))
-        R.id.btn_delete -> noteRequester.input(NoteEvent(NoteEvent.EVENT_REMOVE_ITEM).setNote(item))
+        R.id.btn_mark -> {
+          val markItem = NoteEvent.MarkItem()
+          markItem.note = item
+          noteRequester.input(markItem)
+        }
+        R.id.btn_topping -> {
+          val toppingItem = NoteEvent.ToppingItem()
+          toppingItem.note = item
+          noteRequester.input(toppingItem)
+        }
+        R.id.btn_delete -> {
+          val removeItem = NoteEvent.RemoveItem()
+          removeItem.note = item
+          noteRequester.input(removeItem)
+        }
         R.id.cl -> EditorFragment.start(nav(), item)
       }
     }
     binding.fab.setOnClickListener { EditorFragment.start(nav(), Note()) }
-    noteRequester.input(NoteEvent(NoteEvent.EVENT_GET_NOTE_LIST))
+    noteRequester.input(NoteEvent.GetNoteList())
   }
 
   override fun onBackPressed(): Boolean {
-    messenger.input(Messages(Messages.EVENT_FINISH_ACTIVITY))
+    messenger.input(Messages.FinishActivity())
     return super.onBackPressed()
   }
 

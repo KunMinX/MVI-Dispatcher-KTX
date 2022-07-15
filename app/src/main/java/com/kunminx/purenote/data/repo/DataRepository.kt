@@ -1,10 +1,10 @@
 package com.kunminx.purenote.data.repo
 
 import androidx.room.Room
-import com.kunminx.architecture.data.response.AsyncTask
-import com.kunminx.architecture.data.response.DataResult
 import com.kunminx.architecture.utils.Utils
 import com.kunminx.purenote.data.bean.Note
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Create by KunMinX at 2022/6/14
@@ -15,36 +15,37 @@ class DataRepository private constructor() {
     NoteDataBase::class.java, DATABASE_NAME
   ).build()
 
-  fun getNotes(result: (dataResult: DataResult<MutableList<Note>>) -> Unit) {
-    AsyncTask.doAction({
-      dataBase.noteDao().notes()
-    }) { notes -> result.invoke(DataResult(notes)) }
+  suspend fun getNotes(): MutableList<Note> {
+    val notes: MutableList<Note>
+    withContext(Dispatchers.IO) {
+      notes = dataBase.noteDao().notes()
+    }
+    return notes;
   }
 
-  fun insertNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
-    AsyncTask.doAction({
+  suspend fun insertNote(note: Note): Boolean {
+    withContext(Dispatchers.IO) {
       dataBase.noteDao().insertNote(note)
-      true
-    }) { success -> result.invoke(DataResult(success)) }
+    }
+    return true
   }
 
-  fun updateNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
-    AsyncTask.doAction({
+  suspend fun updateNote(note: Note): Boolean {
+    withContext(Dispatchers.IO) {
       dataBase.noteDao().updateNote(note)
-      true
-    }) { success -> result.invoke(DataResult(success)) }
+    }
+    return true
   }
 
-  fun deleteNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
-    AsyncTask.doAction({
+  suspend fun deleteNote(note: Note): Boolean {
+    withContext(Dispatchers.IO) {
       dataBase.noteDao().deleteNote(note)
-      true
-    }) { success -> result.invoke(DataResult(success)) }
+    }
+    return true
   }
 
   companion object {
     val instance = DataRepository()
     private const val DATABASE_NAME = "NOTE_DB.db"
   }
-
 }

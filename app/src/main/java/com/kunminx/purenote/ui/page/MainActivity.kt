@@ -23,15 +23,15 @@ class MainActivity : BaseActivity() {
    */
   override fun onOutput() {
     messenger.output(this) { messages ->
-      if (messages.eventId == Messages.EVENT_FINISH_ACTIVITY) finish()
+      if (messages is Messages.FinishActivity) finish()
     }
 
     complexRequester.output(this) { complexEvent ->
-      when (complexEvent.eventId) {
-        ComplexEvent.EVENT_TEST_1 -> Log.d("complexEvent", "---1")
-        ComplexEvent.EVENT_TEST_2 -> Log.d("complexEvent", "---2")
-        ComplexEvent.EVENT_TEST_3 -> Log.d("complexEvent", "---3")
-        ComplexEvent.EVENT_TEST_4 -> Log.d("complexEvent", "---4 " + complexEvent.result!!.count)
+      when (complexEvent) {
+        is ComplexEvent.ResultTest1 -> Log.d("complexEvent", "---1")
+        is ComplexEvent.ResultTest2 -> Log.d("complexEvent", "---2")
+        is ComplexEvent.ResultTest3 -> Log.d("complexEvent", "---3")
+        is ComplexEvent.ResultTest4 -> Log.d("complexEvent", "---4 " + complexEvent.count)
       }
     }
   }
@@ -44,13 +44,13 @@ class MainActivity : BaseActivity() {
     super.onInput()
 
     //TODO 此处展示通过 dispatcher.input 连续发送多事件而不被覆盖
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_1))
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
-    complexRequester.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
+    complexRequester.input(ComplexEvent.ResultTest1(1))
+    complexRequester.input(ComplexEvent.ResultTest1(2))
+    complexRequester.input(ComplexEvent.ResultTest1(2))
+    complexRequester.input(ComplexEvent.ResultTest1(2))
+    complexRequester.input(ComplexEvent.ResultTest1(3))
+    complexRequester.input(ComplexEvent.ResultTest1(3))
+    complexRequester.input(ComplexEvent.ResultTest1(3))
+    complexRequester.input(ComplexEvent.ResultTest1(3))
   }
 }

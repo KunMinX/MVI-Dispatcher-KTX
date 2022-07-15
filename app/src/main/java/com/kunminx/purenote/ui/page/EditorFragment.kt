@@ -57,8 +57,8 @@ class EditorFragment : BaseFragment() {
    */
   override fun onOutput() {
     noteRequester.output(this) { noteEvent ->
-      if (noteEvent.eventId == NoteEvent.EVENT_ADD_ITEM) {
-        messenger.input(Messages(Messages.EVENT_REFRESH_NOTE_LIST))
+      if (noteEvent is NoteEvent.AddItem) {
+        messenger.input(Messages.RefreshNoteList())
         ToastUtils.showShortToast(getString(R.string.saved))
         nav().navigateUp()
       }
@@ -87,7 +87,9 @@ class EditorFragment : BaseFragment() {
       states.tempNote.id = UUID.randomUUID().toString()
     }
     states.tempNote.modifyTime = time
-    noteRequester.input(NoteEvent(NoteEvent.EVENT_ADD_ITEM).setNote(states.tempNote))
+    val addItem = NoteEvent.AddItem()
+    addItem.note = states.tempNote
+    noteRequester.input(addItem)
     return true
   }
 

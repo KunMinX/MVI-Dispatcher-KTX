@@ -1,17 +1,17 @@
 package com.kunminx.purenote.domain.request
 
 import android.annotation.SuppressLint
-import com.kunminx.architecture.domain.dispatch.MviDispatcher
+import androidx.lifecycle.viewModelScope
+import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.domain.event.ComplexEvent
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 /**
  * Create by KunMinX at 2022/7/5
  */
-class ComplexRequester : MviDispatcher<ComplexEvent>() {
+class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
   /**
    * TODO tip 1：可初始化配置队列长度，自动丢弃队首过时消息
    */
@@ -28,28 +28,31 @@ class ComplexRequester : MviDispatcher<ComplexEvent>() {
    */
   @SuppressLint("CheckResult")
   override fun input(event: ComplexEvent) {
-    super.input(event)
-    when (event.eventId) {
-      ComplexEvent.EVENT_TEST_1 ->
+    viewModelScope.launch {
+      when (event) {
         //TODO tip 3: 定长队列，随取随用，绝不丢失事件
         // 此处通过 RxJava 轮询模拟事件连发，可于 Logcat Debug 见输出
-        Observable.interval(1, TimeUnit.MILLISECONDS)
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe { aLong: Long ->
-            val event1 = ComplexEvent(ComplexEvent.EVENT_TEST_4)
-            event1.param!!.count = aLong
-            input(event1)
-          }
-      ComplexEvent.EVENT_TEST_2 -> Observable.timer(200, TimeUnit.MILLISECONDS)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { aLong: Long? -> sendResult(event) }
-      ComplexEvent.EVENT_TEST_3 -> sendResult(event)
-      ComplexEvent.EVENT_TEST_4 -> {
-        event.result!!.count = event.param!!.count
-        sendResult(event)
+
+        is ComplexEvent.ResultTest1 -> interval().collect {
+          val event1 = ComplexEvent.ResultTest4(it)
+          input(event1)
+        }
+        is ComplexEvent.ResultTest2 -> timer().collect { sendResult(event) }
+        is ComplexEvent.ResultTest3 -> sendResult(event)
+        is ComplexEvent.ResultTest4 -> sendResult(event)
       }
     }
+  }
+
+  private fun interval() = flow {
+    for (i in 1..Int.MAX_VALUE) {
+      delay(1)
+      emit(i)
+    }
+  }
+
+  private fun timer() = flow {
+    delay(200)
+    emit(true)
   }
 }
