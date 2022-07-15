@@ -6,13 +6,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.kunminx.architecture.ui.scope.ApplicationInstance
-import com.kunminx.architecture.domain.queue.FixedLengthList.QueueCallback
-import com.kunminx.architecture.domain.queue.FixedLengthList
-import com.kunminx.architecture.domain.message.MutableResult
-import com.kunminx.architecture.domain.dispatch.MviDispatcher
 import com.kunminx.architecture.domain.event.Event
-import java.util.*
+import com.kunminx.architecture.domain.message.MutableResult
+import com.kunminx.architecture.domain.queue.FixedLengthList
 
 /**
  * Create by KunMinX at 2022/7/3
@@ -48,7 +44,7 @@ open class MviDispatcher<E : Event<*, *>?> : ViewModel(), DefaultLifecycleObserv
   }
 
   protected fun sendResult(event: E) {
-    mResults.init(initQueueMaxLength()) { mutableResult: MutableResult<E> ->
+    mResults.init(initQueueMaxLength()) { mutableResult ->
       for ((_, observer) in mObservers) {
         mutableResult.removeObserver(observer)
       }
@@ -84,26 +80,20 @@ open class MviDispatcher<E : Event<*, *>?> : ViewModel(), DefaultLifecycleObserv
 
   open fun input(event: E) {}
   override fun onDestroy(owner: LifecycleOwner) {
-    super@DefaultLifecycleObserver.onDestroy(owner)
+    super.onDestroy(owner)
     val isFragment = owner is Fragment
     for ((key, owner1) in if (isFragment) mFragmentOwner.entries else mOwner.entries) {
       if (owner1 == owner) {
         mOwner.remove(key)
         if (isFragment) mFragmentOwner.remove(key)
         for (mutableResult in mResults) {
-          mutableResult.removeObserver(
-            Objects.requireNonNull(
-              mObservers[key]
-            )
-          )
+          mObservers.get(key)?.let { mutableResult.removeObserver(it) }
         }
         mObservers.remove(key)
         break
       }
     }
-    if (mObservers.size == 0) {
-      mResults.clear()
-    }
+    if (mObservers.size == 0) mResults.clear()
   }
 
   companion object {
