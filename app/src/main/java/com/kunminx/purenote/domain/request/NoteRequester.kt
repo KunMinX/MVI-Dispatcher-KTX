@@ -21,17 +21,15 @@ class NoteRequester : MviDispatcherKTX<NoteEvent>() {
     viewModelScope.launch {
       when (event) {
         is NoteEvent.GetNoteList -> {
-          DataRepository.instance.getNotes().collect {
-            sendResult(event.copy(it))
-          }
+          DataRepository.instance.getNotes().collect { sendResult(event.copy(it)) }
         }
         is NoteEvent.MarkItem -> {
           val success = DataRepository.instance.updateNote(event.note!!)
-          if (success) sendResult(NoteEvent.MarkItem(success))
+          if (success) sendResult(event.copy(success))
         }
         is NoteEvent.UpdateItem -> {
           val success = DataRepository.instance.updateNote(event.note!!)
-          if (success) sendResult(NoteEvent.UpdateItem(success))
+          if (success) sendResult(event.copy(success))
         }
         is NoteEvent.ToppingItem -> {
           val success = DataRepository.instance.updateNote(event.note!!)
@@ -41,11 +39,11 @@ class NoteRequester : MviDispatcherKTX<NoteEvent>() {
         }
         is NoteEvent.AddItem -> {
           val success = DataRepository.instance.insertNote(event.note!!)
-          if (success) sendResult(NoteEvent.AddItem(success))
+          if (success) sendResult(event.copy(success))
         }
         is NoteEvent.RemoveItem -> {
           val success = DataRepository.instance.deleteNote(event.note!!)
-          if (success) sendResult(NoteEvent.RemoveItem(success))
+          if (success) sendResult(event.copy(success))
         }
       }
     }
