@@ -9,11 +9,11 @@ import com.kunminx.purenote.domain.message.PageMessenger
 import com.kunminx.purenote.domain.request.ComplexRequester
 
 class MainActivity : BaseActivity() {
-  private var mMessenger: PageMessenger? = null
-  private var mComplexRequester: ComplexRequester? = null
+  private var messenger: PageMessenger? = null
+  private var complexRequester: ComplexRequester? = null
   override fun onInitViewModel() {
-    mMessenger = getApplicationScopeViewModel(PageMessenger::class.java)
-    mComplexRequester = getActivityScopeViewModel(ComplexRequester::class.java)
+    messenger = getApplicationScopeViewModel(PageMessenger::class.java)
+    complexRequester = getActivityScopeViewModel(ComplexRequester::class.java)
   }
 
   override fun onInitView() {
@@ -25,11 +25,11 @@ class MainActivity : BaseActivity() {
    * 通过唯一出口 'dispatcher.output' 统一接收 '唯一可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
    */
   override fun onOutput() {
-    mMessenger?.output(this) { messages ->
+    messenger?.output(this) { messages ->
       if (messages.eventId == Messages.EVENT_FINISH_ACTIVITY) finish()
     }
 
-    mComplexRequester?.output(this) { complexEvent ->
+    complexRequester?.output(this) { complexEvent ->
       if (complexEvent.eventId == ComplexEvent.EVENT_TEST_1) Log.d(
         "complexEvent",
         "---1"
@@ -54,13 +54,13 @@ class MainActivity : BaseActivity() {
     super.onInput()
 
     //TODO 此处展示通过 dispatcher.input 连续发送多事件而不被覆盖
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_1))
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
-    mComplexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_1))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_2))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
+    complexRequester!!.input(ComplexEvent(ComplexEvent.EVENT_TEST_3))
   }
 }

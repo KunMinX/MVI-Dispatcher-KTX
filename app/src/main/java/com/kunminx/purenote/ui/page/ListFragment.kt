@@ -18,21 +18,21 @@ import com.kunminx.purenote.ui.adapter.NoteAdapter
  * Create by KunMinX at 2022/6/30
  */
 class ListFragment : BaseFragment() {
-  private var mBinding: FragmentListBinding? = null
-  private var mStates: ListViewModel? = null
-  private var mNoteRequester: NoteRequester? = null
-  private var mMessenger: PageMessenger? = null
-  private var mAdapter: NoteAdapter? = null
+  private var binding: FragmentListBinding? = null
+  private var states: ListViewModel? = null
+  private var noteRequester: NoteRequester? = null
+  private var messenger: PageMessenger? = null
+  private var adapter: NoteAdapter? = null
   override fun onInitViewModel() {
-    mStates = getFragmentScopeViewModel(ListViewModel::class.java)
-    mNoteRequester = getFragmentScopeViewModel(NoteRequester::class.java)
-    mMessenger = getApplicationScopeViewModel(PageMessenger::class.java)
+    states = getFragmentScopeViewModel(ListViewModel::class.java)
+    noteRequester = getFragmentScopeViewModel(NoteRequester::class.java)
+    messenger = getApplicationScopeViewModel(PageMessenger::class.java)
   }
 
   override fun onInitView(inflater: LayoutInflater, container: ViewGroup?): View {
-    mBinding = FragmentListBinding.inflate(inflater, container, false)
-    mBinding!!.rv.adapter = NoteAdapter().also { mAdapter = it }
-    return mBinding!!.root
+    binding = FragmentListBinding.inflate(inflater, container, false)
+    binding!!.rv.adapter = NoteAdapter().also { adapter = it }
+    return binding!!.root
   }
 
   /**
@@ -40,18 +40,18 @@ class ListFragment : BaseFragment() {
    * 通过唯一出口 'dispatcher.output' 统一接收 '唯一可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
    */
   override fun onOutput() {
-    mMessenger?.output(this) { messages ->
+    messenger?.output(this) { messages ->
       if (messages.eventId == Messages.EVENT_REFRESH_NOTE_LIST) {
-        mNoteRequester!!.input(NoteEvent(NoteEvent.EVENT_GET_NOTE_LIST))
+        noteRequester!!.input(NoteEvent(NoteEvent.EVENT_GET_NOTE_LIST))
       }
     }
-    mNoteRequester?.output(this) { noteEvent ->
+    noteRequester?.output(this) { noteEvent ->
       when (noteEvent.eventId) {
         NoteEvent.EVENT_TOPPING_ITEM, NoteEvent.EVENT_GET_NOTE_LIST -> {
-          mStates!!.list = noteEvent.result!!.notes!!
-          mAdapter!!.setData(mStates!!.list)
-          mBinding!!.ivEmpty.visibility =
-            if (mStates!!.list.isEmpty()) View.VISIBLE else View.GONE
+          states!!.list = noteEvent.result!!.notes!!
+          adapter!!.setData(states!!.list)
+          binding!!.ivEmpty.visibility =
+            if (states!!.list.isEmpty()) View.VISIBLE else View.GONE
         }
         NoteEvent.EVENT_MARK_ITEM -> {}
         NoteEvent.EVENT_REMOVE_ITEM -> {}
@@ -64,23 +64,23 @@ class ListFragment : BaseFragment() {
    * 通过唯一入口 'dispatcher.input' 发消息至 "唯一可信源"，由其内部统一处理业务逻辑和结果分发。
    */
   override fun onInput() {
-    mAdapter!!.setListener { viewId, position, item ->
+    adapter!!.setListener { viewId, position, item ->
       if (viewId == R.id.btn_mark) {
-        mNoteRequester!!.input(NoteEvent(NoteEvent.EVENT_MARK_ITEM).setNote(item))
+        noteRequester!!.input(NoteEvent(NoteEvent.EVENT_MARK_ITEM).setNote(item))
       } else if (viewId == R.id.btn_topping) {
-        mNoteRequester!!.input(NoteEvent(NoteEvent.EVENT_TOPPING_ITEM).setNote(item))
+        noteRequester!!.input(NoteEvent(NoteEvent.EVENT_TOPPING_ITEM).setNote(item))
       } else if (viewId == R.id.btn_delete) {
-        mNoteRequester!!.input(NoteEvent(NoteEvent.EVENT_REMOVE_ITEM).setNote(item))
+        noteRequester!!.input(NoteEvent(NoteEvent.EVENT_REMOVE_ITEM).setNote(item))
       } else if (viewId == R.id.cl) {
         EditorFragment.start(nav(), item)
       }
     }
-    mBinding!!.fab.setOnClickListener { EditorFragment.start(nav(), Note()) }
-    mNoteRequester!!.input(NoteEvent(NoteEvent.EVENT_GET_NOTE_LIST))
+    binding!!.fab.setOnClickListener { EditorFragment.start(nav(), Note()) }
+    noteRequester!!.input(NoteEvent(NoteEvent.EVENT_GET_NOTE_LIST))
   }
 
   override fun onBackPressed(): Boolean {
-    mMessenger!!.input(Messages(Messages.EVENT_FINISH_ACTIVITY))
+    messenger!!.input(Messages(Messages.EVENT_FINISH_ACTIVITY))
     return super.onBackPressed()
   }
 

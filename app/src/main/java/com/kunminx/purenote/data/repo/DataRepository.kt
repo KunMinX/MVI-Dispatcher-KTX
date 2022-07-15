@@ -10,34 +10,34 @@ import com.kunminx.purenote.data.bean.Note
  * Create by KunMinX at 2022/6/14
  */
 class DataRepository private constructor() {
-  private val mDataBase: NoteDataBase = Room.databaseBuilder(
+  private val dataBase: NoteDataBase = Room.databaseBuilder(
     Utils.app!!.applicationContext,
     NoteDataBase::class.java, DATABASE_NAME
   ).build()
 
   fun getNotes(result: (dataResult: DataResult<MutableList<Note>>) -> Unit) {
     AsyncTask.doAction({
-      mDataBase.noteDao().notes
+      dataBase.noteDao().notes
     }) { notes -> result.invoke(DataResult(notes)) }
   }
 
   fun insertNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
     AsyncTask.doAction({
-      mDataBase.noteDao().insertNote(note)
+      dataBase.noteDao().insertNote(note)
       true
     }) { success -> result.invoke(DataResult(success)) }
   }
 
   fun updateNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
     AsyncTask.doAction({
-      mDataBase.noteDao().updateNote(note)
+      dataBase.noteDao().updateNote(note)
       true
     }) { success -> result.invoke(DataResult(success)) }
   }
 
   fun deleteNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
     AsyncTask.doAction({
-      mDataBase.noteDao().deleteNote(note)
+      dataBase.noteDao().deleteNote(note)
       true
     }) { success -> result.invoke(DataResult(success)) }
   }
