@@ -44,13 +44,13 @@ class MainActivity : BaseActivity() {
     super.onInput()
 
     //TODO 此处展示通过 dispatcher.input 连续发送多事件而不被覆盖
-    complexRequester.input(ComplexEvent.ResultTest1(1))
-    complexRequester.input(ComplexEvent.ResultTest1(2))
-    complexRequester.input(ComplexEvent.ResultTest1(2))
-    complexRequester.input(ComplexEvent.ResultTest1(2))
-    complexRequester.input(ComplexEvent.ResultTest1(3))
-    complexRequester.input(ComplexEvent.ResultTest1(3))
-    complexRequester.input(ComplexEvent.ResultTest1(3))
-    complexRequester.input(ComplexEvent.ResultTest1(3))
+    complexRequester.input(ComplexEvent.ResultTest1())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest3())
+    complexRequester.input(ComplexEvent.ResultTest3())
+    complexRequester.input(ComplexEvent.ResultTest3())
   }
 }

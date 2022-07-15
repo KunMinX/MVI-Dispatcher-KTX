@@ -38,7 +38,7 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
   }
 
   private fun interval() = flow {
-    for (i in 1..Int.MAX_VALUE) {
+    for (i in 0..Int.MAX_VALUE) {
       delay(1)
       emit(i)
     }
