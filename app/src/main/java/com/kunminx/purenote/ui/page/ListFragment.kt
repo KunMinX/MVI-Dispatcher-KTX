@@ -34,7 +34,7 @@ class ListFragment : BaseFragment() {
 
   /**
    * TODO tip 1：
-   * 通过唯一出口 'dispatcher.output' 统一接收 '唯一可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
+   *  通过唯一出口 'dispatcher.output' 统一接收 '唯一可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
    */
   override fun onOutput() {
     messenger.output(this) { messages ->
@@ -57,7 +57,7 @@ class ListFragment : BaseFragment() {
 
   /**
    * TODO tip 2：
-   * 通过唯一入口 'dispatcher.input' 发消息至 "唯一可信源"，由其内部统一处理业务逻辑和结果分发。
+   *  通过唯一入口 'dispatcher.input' 发消息至 "唯一可信源"，由其内部统一处理业务逻辑和结果分发。
    */
   override fun onInput() {
     adapter.setListener { viewId, position, item ->
