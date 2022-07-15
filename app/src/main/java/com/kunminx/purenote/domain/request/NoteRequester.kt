@@ -35,7 +35,7 @@ class NoteRequester : MviDispatcher<NoteEvent>() {
           event.result!!.isSuccess = dataResult.result
           if (event.result!!.isSuccess) {
             DataRepository.instance
-              .getNotes { dataResult1: DataResult<List<Note>> ->
+              .getNotes { dataResult1: DataResult<MutableList<Note>> ->
                 event.result!!.notes = dataResult1.result
                 sendResult(event)
               }

@@ -48,10 +48,10 @@ class ListFragment : BaseFragment() {
     mNoteRequester?.output(this) { noteEvent ->
       when (noteEvent.eventId) {
         NoteEvent.EVENT_TOPPING_ITEM, NoteEvent.EVENT_GET_NOTE_LIST -> {
-          mStates!!.list = noteEvent.result!!.notes
+          mStates!!.list = noteEvent.result!!.notes!!
           mAdapter!!.setData(mStates!!.list)
           mBinding!!.ivEmpty.visibility =
-            if (mStates!!.list!!.isEmpty()) View.VISIBLE else View.GONE
+            if (mStates!!.list.isEmpty()) View.VISIBLE else View.GONE
         }
         NoteEvent.EVENT_MARK_ITEM -> {}
         NoteEvent.EVENT_REMOVE_ITEM -> {}
@@ -85,6 +85,6 @@ class ListFragment : BaseFragment() {
   }
 
   class ListViewModel : ViewModel() {
-    var list: List<Note?>? = ArrayList()
+    var list: MutableList<Note> = mutableListOf()
   }
 }

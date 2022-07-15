@@ -16,21 +16,21 @@ import kotlinx.parcelize.Parcelize
 data class Note(
   @JvmField
   @PrimaryKey
-  val id: String = "",
+  var id: String = "",
 
   @JvmField
-  val title: String? = "",
+  var title: String? = "",
 
   @JvmField
-  val content: String? = "",
+  var content: String? = "",
 
   @JvmField
   @ColumnInfo(name = "create_time")
-  val createTime: Long = 0,
+  var createTime: Long = 0,
 
   @JvmField
   @ColumnInfo(name = "modify_time")
-  val modifyTime: Long = 0,
+  var modifyTime: Long = 0,
 
   @JvmField
   var type: Int = 0,
@@ -53,6 +53,7 @@ data class Note(
   val isTopping: Boolean
     get() = type and TYPE_TOPPING != 0
 
+  @Ignore
   fun toggleType(param: Int) {
     type = if (type and param != 0) {
       type and param.inv()

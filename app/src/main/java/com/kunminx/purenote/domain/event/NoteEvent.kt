@@ -17,7 +17,7 @@ class NoteEvent(eventId: Int) : Event<NoteEvent.Param?, NoteEvent.Result?>() {
   }
 
   class Result {
-    var notes: List<Note>? = null
+    var notes: MutableList<Note>? = null
     var isSuccess = false
   }
 

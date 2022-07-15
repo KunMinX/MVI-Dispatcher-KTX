@@ -9,7 +9,7 @@ import com.kunminx.purenote.data.bean.Note
 @Dao
 interface NoteDao {
   @get:Query("select * from note order by type & 0x0001 = 0x0001 desc, modify_time desc")
-  val notes: List<Note>
+  val notes: MutableList<Note>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insertNote(note: Note)

@@ -15,34 +15,36 @@ class DataRepository private constructor() {
     NoteDataBase::class.java, DATABASE_NAME
   ).build()
 
-  fun getNotes(result: (dataResult: DataResult<List<Note>>) -> Unit) {
-    AsyncTask.doAction({ mDataBase.noteDao().notes }
-    ) { notes: List<Note> -> result.invoke(DataResult(notes)) }
+  fun getNotes(result: (dataResult: DataResult<MutableList<Note>>) -> Unit) {
+    AsyncTask.doAction({
+      mDataBase.noteDao().notes
+    }) { notes -> result.invoke(DataResult(notes)) }
   }
 
   fun insertNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
     AsyncTask.doAction({
       mDataBase.noteDao().insertNote(note)
       true
-    }) { success: Boolean -> result.invoke(DataResult(success)) }
+    }) { success -> result.invoke(DataResult(success)) }
   }
 
   fun updateNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
     AsyncTask.doAction({
       mDataBase.noteDao().updateNote(note)
       true
-    }) { success: Boolean -> result.invoke(DataResult(success)) }
+    }) { success -> result.invoke(DataResult(success)) }
   }
 
   fun deleteNote(note: Note, result: (dataResult: DataResult<Boolean>) -> Unit) {
     AsyncTask.doAction({
       mDataBase.noteDao().deleteNote(note)
       true
-    }) { success: Boolean -> result.invoke(DataResult(success)) }
+    }) { success -> result.invoke(DataResult(success)) }
   }
 
   companion object {
     val instance = DataRepository()
     private const val DATABASE_NAME = "NOTE_DB.db"
   }
+
 }
