@@ -13,59 +13,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.kunminx.architecture.ui.adapter
 
-package com.kunminx.architecture.ui.adapter;
-
-
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.PagerAdapter;
+import androidx.appcompat.app.AppCompatActivity
+import com.kunminx.architecture.ui.scope.ViewModelScope
+import android.annotation.SuppressLint
+import android.os.Bundle
+import com.kunminx.architecture.ui.page.BaseActivity
+import com.kunminx.architecture.utils.AdaptScreenUtils
+import android.app.Activity
+import android.content.Intent
+import android.view.WindowManager
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.viewbinding.ViewBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
+import androidx.viewpager.widget.PagerAdapter
+import com.kunminx.architecture.data.response.AsyncTask.ActionStart
+import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.ObservableEmitter
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import com.kunminx.architecture.data.response.DataResult
+import com.kunminx.architecture.data.response.ResultSource
+import androidx.core.content.FileProvider
+import android.widget.Toast
+import android.util.DisplayMetrics
+import android.view.View
 
 /**
  * Create by KunMinX at 19/6/15
  */
-public class CommonViewPagerAdapter extends PagerAdapter {
-
-  private final int count;
-  private final boolean enableDestroyItem;
-  private final String[] title;
-
-  public CommonViewPagerAdapter(boolean enableDestroyItem, String[] title) {
-    this.count = title.length;
-    this.enableDestroyItem = enableDestroyItem;
-    this.title = title;
+class CommonViewPagerAdapter(enableDestroyItem: Boolean, title: Array<String>) : PagerAdapter() {
+  private val count: Int
+  private val enableDestroyItem: Boolean
+  private val title: Array<String>
+  override fun getCount(): Int {
+    return count
   }
 
-  @Override
-  public int getCount() {
-    return count;
+  override fun isViewFromObject(view: View, `object`: Any): Boolean {
+    return view === `object`
   }
 
-  @Override
-  public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-    return view == object;
+  override fun instantiateItem(container: ViewGroup, position: Int): Any {
+    return container.getChildAt(position)
   }
 
-  @NonNull
-  @Override
-  public Object instantiateItem(@NonNull ViewGroup container, int position) {
-    return container.getChildAt(position);
-  }
-
-  @Override
-  public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+  override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
     if (enableDestroyItem) {
-      container.removeView((View) object);
+      container.removeView(`object` as View)
     }
   }
 
-  @Nullable
-  @Override
-  public CharSequence getPageTitle(int position) {
-    return title[position];
+  override fun getPageTitle(position: Int): CharSequence? {
+    return title[position]
+  }
+
+  init {
+    count = title.size
+    this.enableDestroyItem = enableDestroyItem
+    this.title = title
   }
 }
-

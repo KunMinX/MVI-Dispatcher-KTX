@@ -1,81 +1,111 @@
-package com.kunminx.architecture.utils;
+package com.kunminx.architecture.utils
 
-import android.annotation.SuppressLint;
-import android.app.Application;
-import android.content.Context;
-
-import androidx.core.content.FileProvider;
-
-import java.lang.reflect.InvocationTargetException;
+import androidx.appcompat.app.AppCompatActivity
+import com.kunminx.architecture.ui.scope.ViewModelScope
+import android.annotation.SuppressLint
+import android.os.Bundle
+import com.kunminx.architecture.ui.page.BaseActivity
+import com.kunminx.architecture.utils.AdaptScreenUtils
+import android.app.Activity
+import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.view.WindowManager
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.viewbinding.ViewBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
+import androidx.viewpager.widget.PagerAdapter
+import com.kunminx.architecture.data.response.AsyncTask.ActionStart
+import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.ObservableEmitter
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import com.kunminx.architecture.data.response.DataResult
+import com.kunminx.architecture.data.response.ResultSource
+import androidx.core.content.FileProvider
+import android.widget.Toast
+import android.util.DisplayMetrics
+import java.lang.NullPointerException
+import java.lang.UnsupportedOperationException
+import java.lang.reflect.InvocationTargetException
 
 /**
  * <pre>
- *     blog  : http://blankj.com
- *     time  : 16/12/08
- *     desc  : utils about initialization
- * </pre>
+ * blog  : http://blankj.com
+ * time  : 16/12/08
+ * desc  : utils about initialization
+</pre> *
  */
-public final class Utils {
-
-  @SuppressLint("StaticFieldLeak")
-  private static Application sApplication;
-
-  private Utils() {
-    throw new UnsupportedOperationException("u can't instantiate me...");
-  }
-
-  public static void init(final Context context) {
-    if (context == null) {
-      init(getApplicationByReflect());
-      return;
+class Utils private constructor() {
+  class FileProvider4UtilCode : FileProvider() {
+    override fun onCreate(): Boolean {
+      init(context)
+      return true
     }
-    init((Application) context.getApplicationContext());
   }
 
-  public static void init(final Application app) {
-    if (sApplication == null) {
-      if (app == null) {
-        sApplication = getApplicationByReflect();
+  companion object {
+    @SuppressLint("StaticFieldLeak")
+    private var sApplication: Application? = null
+    fun init(context: Context?) {
+      if (context == null) {
+        init(applicationByReflect)
+        return
+      }
+      init(context.applicationContext as Application)
+    }
+
+    fun init(app: Application?) {
+      if (sApplication == null) {
+        if (app == null) {
+          sApplication = applicationByReflect
+        } else {
+          sApplication = app
+        }
       } else {
-        sApplication = app;
-      }
-    } else {
-      if (app != null && app.getClass() != sApplication.getClass()) {
-        sApplication = app;
+        if (app != null && app.javaClass != sApplication!!.javaClass) {
+          sApplication = app
+        }
       }
     }
-  }
 
-  public static Application getApp() {
-    if (sApplication != null) {
-      return sApplication;
-    }
-    Application app = getApplicationByReflect();
-    init(app);
-    return app;
-  }
-
-  private static Application getApplicationByReflect() {
-    try {
-      @SuppressLint("PrivateApi")
-      Class<?> activityThread = Class.forName("android.app.ActivityThread");
-      Object thread = activityThread.getMethod("currentActivityThread").invoke(null);
-      Object app = activityThread.getMethod("getApplication").invoke(thread);
-      if (app == null) {
-        throw new NullPointerException("u should init first");
+    val app: Application?
+      get() {
+        if (sApplication != null) {
+          return sApplication
+        }
+        val app = applicationByReflect
+        init(app)
+        return app
       }
-      return (Application) app;
-    } catch (NoSuchMethodException | IllegalAccessException | ClassNotFoundException | InvocationTargetException e) {
-      e.printStackTrace();
-    }
-    throw new NullPointerException("u should init first");
+    private val applicationByReflect: Application
+      private get() {
+        try {
+          @SuppressLint("PrivateApi") val activityThread =
+            Class.forName("android.app.ActivityThread")
+          val thread = activityThread.getMethod("currentActivityThread").invoke(null)
+          val app = activityThread.getMethod("getApplication").invoke(thread)
+            ?: throw NullPointerException("u should init first")
+          return app as Application
+        } catch (e: NoSuchMethodException) {
+          e.printStackTrace()
+        } catch (e: IllegalAccessException) {
+          e.printStackTrace()
+        } catch (e: ClassNotFoundException) {
+          e.printStackTrace()
+        } catch (e: InvocationTargetException) {
+          e.printStackTrace()
+        }
+        throw NullPointerException("u should init first")
+      }
   }
 
-  public static final class FileProvider4UtilCode extends FileProvider {
-    @Override
-    public boolean onCreate() {
-      Utils.init(getContext());
-      return true;
-    }
+  init {
+    throw UnsupportedOperationException("u can't instantiate me...")
   }
 }

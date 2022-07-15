@@ -1,73 +1,78 @@
-package com.kunminx.architecture.ui.adapter;
+package com.kunminx.architecture.ui.adapter
 
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewbinding.ViewBinding;
-
-import java.util.ArrayList;
-import java.util.List;
+import androidx.appcompat.app.AppCompatActivity
+import com.kunminx.architecture.ui.scope.ViewModelScope
+import android.annotation.SuppressLint
+import android.os.Bundle
+import com.kunminx.architecture.ui.page.BaseActivity
+import com.kunminx.architecture.utils.AdaptScreenUtils
+import android.app.Activity
+import android.content.Intent
+import android.view.WindowManager
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.viewbinding.ViewBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
+import androidx.viewpager.widget.PagerAdapter
+import com.kunminx.architecture.data.response.AsyncTask.ActionStart
+import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.ObservableEmitter
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import com.kunminx.architecture.data.response.DataResult
+import com.kunminx.architecture.data.response.ResultSource
+import androidx.core.content.FileProvider
+import android.widget.Toast
+import android.util.DisplayMetrics
+import java.util.ArrayList
 
 /**
  * Create by KunMinX at 2020/6/24
  */
-public abstract class BaseAdapter<T, V extends ViewBinding> extends RecyclerView.Adapter<BaseAdapter.BaseHolder<V>> {
-  private final List<T> data;
-  protected OnItemClickListener<T> listener;
-
-  public BaseAdapter() {
-    data = new ArrayList<>();
+abstract class BaseAdapter<T, V : ViewBinding?> : RecyclerView.Adapter<BaseHolder<V>>() {
+  private val data: MutableList<T>
+  protected var listener: OnItemClickListener<T>? = null
+  fun setData(data: List<T>?) {
+    this.data.clear()
+    this.data.addAll(data!!)
+    notifyDataSetChanged()
   }
 
-  public void setData(List<T> data) {
-    this.data.clear();
-    this.data.addAll(data);
-    notifyDataSetChanged();
+  fun setListener(listener: OnItemClickListener<T>?) {
+    this.listener = listener
   }
 
-  public void setListener(OnItemClickListener<T> listener) {
-    this.listener = listener;
+  protected fun getData(): List<T> {
+    return data
   }
 
-  protected List<T> getData() {
-    return data;
+  override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): BaseHolder<V> {
+    return BaseHolder(onBindingView(viewGroup))
   }
 
-  @NonNull
-  @Override
-  public BaseHolder<V> onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-    return new BaseHolder<>(onBindingView(viewGroup));
+  override fun onBindViewHolder(holder: BaseHolder<V>, position: Int) {
+    onBindingData(holder, data[position], position)
   }
 
-  @Override
-  public void onBindViewHolder(@NonNull BaseHolder<V> holder, int position) {
-    onBindingData(holder, data.get(position), position);
+  protected abstract fun onBindingData(holder: BaseHolder<V>?, t: T, position: Int)
+  protected abstract fun onBindingView(viewGroup: ViewGroup?): V
+  override fun getItemCount(): Int {
+    return data.size
   }
 
-  protected abstract void onBindingData(BaseHolder<V> holder, T t, int position);
+  class BaseHolder<V : ViewBinding?>(val binding: V) : RecyclerView.ViewHolder(
+    binding!!.root
+  )
 
-  protected abstract V onBindingView(ViewGroup viewGroup);
-
-  @Override
-  public int getItemCount() {
-    return data.size();
+  interface OnItemClickListener<T> {
+    fun onItemClick(viewId: Int, position: Int, t: T)
   }
 
-  public static class BaseHolder<V extends ViewBinding> extends RecyclerView.ViewHolder {
-    private final V binding;
-
-    public BaseHolder(V viewBinding) {
-      super(viewBinding.getRoot());
-      this.binding = viewBinding;
-    }
-
-    public V getBinding() {
-      return binding;
-    }
-  }
-
-  public interface OnItemClickListener<T> {
-    void onItemClick(int viewId, int position, T t);
+  init {
+    data = ArrayList()
   }
 }

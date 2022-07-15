@@ -13,42 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.kunminx.architecture.data.response
 
-package com.kunminx.architecture.data.response;
+import androidx.appcompat.app.AppCompatActivity
+import com.kunminx.architecture.ui.scope.ViewModelScope
+import android.annotation.SuppressLint
+import android.os.Bundle
+import com.kunminx.architecture.ui.page.BaseActivity
+import com.kunminx.architecture.utils.AdaptScreenUtils
+import android.app.Activity
+import android.content.Intent
+import android.view.WindowManager
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.viewbinding.ViewBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
+import androidx.viewpager.widget.PagerAdapter
+import com.kunminx.architecture.data.response.AsyncTask.ActionStart
+import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.ObservableEmitter
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import com.kunminx.architecture.data.response.DataResult
+import com.kunminx.architecture.data.response.ResultSource
+import androidx.core.content.FileProvider
+import android.widget.Toast
+import android.util.DisplayMetrics
 
 /**
  * TODO：本类仅用作示例参考，请根据 "实际项目需求" 配置自定义的 "响应状态元信息"
- * <p>
+ *
+ *
  * Create by KunMinX at 19/10/11
  */
-public class ResponseStatus {
+class ResponseStatus {
+  var responseCode = ""
+    private set
+  var isSuccess = true
+    private set
+  var source: Enum<ResultSource> = ResultSource.NETWORK
+    private set
 
-    private String responseCode = "";
-    private boolean success = true;
-    private Enum<ResultSource> source = ResultSource.NETWORK;
+  constructor() {}
+  constructor(responseCode: String, success: Boolean) {
+    this.responseCode = responseCode
+    isSuccess = success
+  }
 
-    public ResponseStatus() {
-    }
-
-    public ResponseStatus(String responseCode, boolean success) {
-        this.responseCode = responseCode;
-        this.success = success;
-    }
-
-    public ResponseStatus(String responseCode, boolean success, Enum<ResultSource> source) {
-        this(responseCode, success);
-        this.source = source;
-    }
-
-    public String getResponseCode() {
-        return responseCode;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public Enum<ResultSource> getSource() {
-        return source;
-    }
+  constructor(responseCode: String, success: Boolean, source: Enum<ResultSource>) : this(
+    responseCode,
+    success
+  ) {
+    this.source = source
+  }
 }

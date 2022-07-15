@@ -13,128 +13,127 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.kunminx.architecture.ui.page
 
-package com.kunminx.architecture.ui.page;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-
-import com.kunminx.architecture.ui.scope.ViewModelScope;
-
+import androidx.appcompat.app.AppCompatActivity
+import com.kunminx.architecture.ui.scope.ViewModelScope
+import android.annotation.SuppressLint
+import android.os.Bundle
+import com.kunminx.architecture.ui.page.BaseActivity
+import com.kunminx.architecture.utils.AdaptScreenUtils
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.view.WindowManager
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.viewbinding.ViewBinding
+import androidx.recyclerview.widget.RecyclerView
+import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
+import androidx.viewpager.widget.PagerAdapter
+import com.kunminx.architecture.data.response.AsyncTask.ActionStart
+import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.ObservableEmitter
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import com.kunminx.architecture.data.response.DataResult
+import com.kunminx.architecture.data.response.ResultSource
+import androidx.core.content.FileProvider
+import android.widget.Toast
+import android.util.DisplayMetrics
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
 
 /**
  * Create by KunMinX at 19/7/11
  */
-public abstract class BaseFragment extends Fragment {
-
-  private final ViewModelScope mViewModelScope = new ViewModelScope();
-  protected AppCompatActivity mActivity;
-
-  protected abstract void onInitViewModel();
-
-  protected abstract View onInitView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container);
-
-  protected void onInitData() {
+abstract class BaseFragment : Fragment() {
+  private val mViewModelScope = ViewModelScope()
+  protected var mActivity: AppCompatActivity? = null
+  protected abstract fun onInitViewModel()
+  protected abstract fun onInitView(inflater: LayoutInflater, container: ViewGroup?): View?
+  protected open fun onInitData() {}
+  protected open fun onOutput() {}
+  protected open fun onInput() {}
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    mActivity = context as AppCompatActivity
   }
 
-  protected void onOutput() {
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    onInitViewModel()
+    addOnBackPressed()
   }
 
-  protected void onInput() {
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
+    return onInitView(inflater, container)
   }
 
-  @Override
-  public void onAttach(@NonNull Context context) {
-    super.onAttach(context);
-    mActivity = (AppCompatActivity) context;
-  }
-
-  @Override
-  public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    onInitViewModel();
-    addOnBackPressed();
-  }
-
-  @Nullable
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    return onInitView(inflater, container);
-  }
-
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    onInitData();
-    onOutput();
-    onInput();
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    onInitData()
+    onOutput()
+    onInput()
   }
 
   //TODO tip 2: Jetpack 通过 "工厂模式" 实现 ViewModel 作用域可控，
   //目前我们在项目中提供了 Application、Activity、Fragment 三个级别的作用域，
   //值得注意的是，通过不同作用域 Provider 获得 ViewModel 实例非同一个，
   //故若 ViewModel 状态信息保留不符合预期，可从该角度出发排查 是否眼前 ViewModel 实例非目标实例所致。
-
   //如这么说无体会，详见 https://xiaozhuanlan.com/topic/6257931840
-
-  protected <T extends ViewModel> T getFragmentScopeViewModel(@NonNull Class<T> modelClass) {
-    return mViewModelScope.getFragmentScopeViewModel(this, modelClass);
+  protected fun <T : ViewModel?> getFragmentScopeViewModel(modelClass: Class<T>): T {
+    return mViewModelScope.getFragmentScopeViewModel(this, modelClass)
   }
 
-  protected <T extends ViewModel> T getActivityScopeViewModel(@NonNull Class<T> modelClass) {
-    return mViewModelScope.getActivityScopeViewModel(mActivity, modelClass);
+  protected fun <T : ViewModel?> getActivityScopeViewModel(modelClass: Class<T>): T {
+    return mViewModelScope.getActivityScopeViewModel(mActivity!!, modelClass)
   }
 
-  protected <T extends ViewModel> T getApplicationScopeViewModel(@NonNull Class<T> modelClass) {
-    return mViewModelScope.getApplicationScopeViewModel(modelClass);
+  protected fun <T : ViewModel?> getApplicationScopeViewModel(modelClass: Class<T>): T {
+    return mViewModelScope.getApplicationScopeViewModel(modelClass)
   }
 
-  protected NavController nav() {
-    return NavHostFragment.findNavController(this);
+  protected fun nav(): NavController {
+    return NavHostFragment.findNavController(this)
   }
 
-
-  protected void toggleSoftInput() {
-    InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+  protected fun toggleSoftInput() {
+    val imm = mActivity!!.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
   }
 
-  protected void openUrlInBrowser(String url) {
-    Uri uri = Uri.parse(url);
-    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-    startActivity(intent);
+  protected fun openUrlInBrowser(url: String?) {
+    val uri = Uri.parse(url)
+    val intent = Intent(Intent.ACTION_VIEW, uri)
+    startActivity(intent)
   }
 
-  protected Context getAppContext() {
-    return mActivity.getApplicationContext();
+  protected val appContext: Context
+    protected get() = mActivity!!.applicationContext
+
+  private fun addOnBackPressed() {
+    requireActivity().onBackPressedDispatcher.addCallback(
+      this,
+      object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+          if (!onBackPressed()) requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+      })
   }
 
-  private void addOnBackPressed() {
-    requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-      @Override
-      public void handleOnBackPressed() {
-        if (!onBackPressed()) requireActivity().getOnBackPressedDispatcher().onBackPressed();
-      }
-    });
-  }
-
-  protected boolean onBackPressed() {
-    return true;
+  protected open fun onBackPressed(): Boolean {
+    return true
   }
 }

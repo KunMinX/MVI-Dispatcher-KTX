@@ -1,9 +1,13 @@
 buildscript {
+    ext.kotlin_version = '1.7.0'
     ext {
         appTargetSdk = 31
         appMinSdk = 23
         appVersionCode = 400400
         appVersionName = "4.4.0-beta"
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 

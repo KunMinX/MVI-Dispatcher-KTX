@@ -1,33 +1,37 @@
-package com.kunminx.architecture.domain.queue;
+package com.kunminx.architecture.domain.queue
 
-import java.util.LinkedList;
+import androidx.appcompat.app.AppCompatActivity
+import com.kunminx.architecture.ui.scope.ApplicationInstance
+import com.kunminx.architecture.domain.queue.FixedLengthList.QueueCallback
+import com.kunminx.architecture.domain.queue.FixedLengthList
+import com.kunminx.architecture.domain.message.MutableResult
+import com.kunminx.architecture.domain.dispatch.MviDispatcher
+import java.util.*
 
 /**
  * Create by KunMinX at 2022/7/5
  */
-public class FixedLengthList<T> extends LinkedList<T> {
-  private int maxLength;
-  private boolean hasBeenInit;
-  private QueueCallback<T> queueCallback;
-
-  public final void init(int maxLength, QueueCallback<T> queueCallback) {
+class FixedLengthList<T> : LinkedList<T>() {
+  private var maxLength = 0
+  private var hasBeenInit = false
+  private var queueCallback: QueueCallback<T>? = null
+  fun init(maxLength: Int, queueCallback: QueueCallback<T>?) {
     if (!hasBeenInit) {
-      this.maxLength = maxLength;
-      this.queueCallback = queueCallback;
-      hasBeenInit = true;
+      this.maxLength = maxLength
+      this.queueCallback = queueCallback
+      hasBeenInit = true
     }
   }
 
-  @Override
-  public boolean add(T t) {
-    if (size() + 1 > maxLength) {
-      T t1 = super.removeFirst();
-      if (queueCallback != null) queueCallback.onRemoveFirst(t1);
+  override fun add(t: T): Boolean {
+    if (size + 1 > maxLength) {
+      val t1 = super.removeFirst()
+      if (queueCallback != null) queueCallback!!.onRemoveFirst(t1)
     }
-    return super.add(t);
+    return super.add(t)
   }
 
-  public interface QueueCallback<T> {
-    void onRemoveFirst(T t);
+  interface QueueCallback<T> {
+    fun onRemoveFirst(t: T)
   }
 }

@@ -1,121 +1,112 @@
-package com.kunminx.architecture.domain.dispatch;
+package com.kunminx.architecture.domain.dispatch
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
-
-import com.kunminx.architecture.domain.event.Event;
-import com.kunminx.architecture.domain.message.MutableResult;
-import com.kunminx.architecture.domain.queue.FixedLengthList;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import com.kunminx.architecture.ui.scope.ApplicationInstance
+import com.kunminx.architecture.domain.queue.FixedLengthList.QueueCallback
+import com.kunminx.architecture.domain.queue.FixedLengthList
+import com.kunminx.architecture.domain.message.MutableResult
+import com.kunminx.architecture.domain.dispatch.MviDispatcher
+import com.kunminx.architecture.domain.event.Event
+import java.util.*
 
 /**
  * Create by KunMinX at 2022/7/3
  */
-public class MviDispatcher<E extends Event> extends ViewModel implements DefaultLifecycleObserver {
-
-  private final static int DEFAULT_QUEUE_LENGTH = 10;
-  private final HashMap<Integer, LifecycleOwner> mOwner = new HashMap<>();
-  private final HashMap<Integer, LifecycleOwner> mFragmentOwner = new HashMap<>();
-  private final HashMap<Integer, Observer<E>> mObservers = new HashMap<>();
-  private final FixedLengthList<MutableResult<E>> mResults = new FixedLengthList<>();
-
-  protected int initQueueMaxLength() {
-    return DEFAULT_QUEUE_LENGTH;
+open class MviDispatcher<E : Event<*, *>?> : ViewModel(), DefaultLifecycleObserver {
+  private val mOwner = HashMap<Int, LifecycleOwner>()
+  private val mFragmentOwner = HashMap<Int, LifecycleOwner>()
+  private val mObservers = HashMap<Int, Observer<E>>()
+  private val mResults = FixedLengthList<MutableResult<E>>()
+  protected open fun initQueueMaxLength(): Int {
+    return DEFAULT_QUEUE_LENGTH
   }
 
-  public final void output(@NonNull AppCompatActivity activity, @NonNull Observer<E> observer) {
-    activity.getLifecycle().addObserver(this);
-    Integer identityId = System.identityHashCode(activity);
-    outputTo(identityId, activity, observer);
+  fun output(activity: AppCompatActivity, observer: Observer<E>) {
+    activity.lifecycle.addObserver(this)
+    val identityId = System.identityHashCode(activity)
+    outputTo(identityId, activity, observer)
   }
 
-  public final void output(@NonNull Fragment fragment, @NonNull Observer<E> observer) {
-    fragment.getLifecycle().addObserver(this);
-    Integer identityId = System.identityHashCode(fragment);
-    this.mFragmentOwner.put(identityId, fragment);
-    outputTo(identityId, fragment.getViewLifecycleOwner(), observer);
+  fun output(fragment: Fragment, observer: Observer<E>) {
+    fragment.lifecycle.addObserver(this)
+    val identityId = System.identityHashCode(fragment)
+    mFragmentOwner[identityId] = fragment
+    outputTo(identityId, fragment.viewLifecycleOwner, observer)
   }
 
-  private void outputTo(Integer identityId, LifecycleOwner owner, Observer<E> observer) {
-    this.mOwner.put(identityId, owner);
-    this.mObservers.put(identityId, observer);
-    for (MutableResult<E> result : mResults) {
-      result.observe(owner, observer);
+  private fun outputTo(identityId: Int, owner: LifecycleOwner, observer: Observer<E>) {
+    mOwner[identityId] = owner
+    mObservers[identityId] = observer
+    for (result in mResults) {
+      result.observe(owner, observer)
     }
   }
 
-  protected final void sendResult(@NonNull E event) {
-    mResults.init(initQueueMaxLength(), mutableResult -> {
-      for (Map.Entry<Integer, Observer<E>> entry : mObservers.entrySet()) {
-        Observer<E> observer = entry.getValue();
-        mutableResult.removeObserver(observer);
+  protected fun sendResult(event: E) {
+    mResults.init(initQueueMaxLength()) { mutableResult: MutableResult<E> ->
+      for ((_, observer) in mObservers) {
+        mutableResult.removeObserver(observer)
       }
-    });
-    boolean eventExist = false;
-    for (MutableResult<E> result : mResults) {
-      int id1 = System.identityHashCode(result.getValue());
-      int id2 = System.identityHashCode(event);
+    }
+    var eventExist = false
+    for (result in mResults) {
+      val id1 = System.identityHashCode(result.value)
+      val id2 = System.identityHashCode(event)
       if (id1 == id2) {
-        eventExist = true;
-        break;
+        eventExist = true
+        break
       }
     }
     if (!eventExist) {
-      MutableResult<E> result = new MutableResult<>(event);
-      for (Map.Entry<Integer, Observer<E>> entry : mObservers.entrySet()) {
-        Integer key = entry.getKey();
-        Observer<E> observer = entry.getValue();
-        LifecycleOwner owner = mOwner.get(key);
-        assert owner != null;
-        result.observe(owner, observer);
+      val result = MutableResult(event)
+      for ((key, observer) in mObservers) {
+        val owner = mOwner[key]!!
+        result.observe(owner, observer)
       }
-      mResults.add(result);
+      mResults.add(result)
     }
-
-    MutableResult<E> result = null;
-    for (MutableResult<E> r : mResults) {
-      int id1 = System.identityHashCode(r.getValue());
-      int id2 = System.identityHashCode(event);
+    var result: MutableResult<E>? = null
+    for (r in mResults) {
+      val id1 = System.identityHashCode(r.value)
+      val id2 = System.identityHashCode(event)
       if (id1 == id2) {
-        result = r;
-        break;
+        result = r
+        break
       }
     }
-    if (result != null) result.setValue(event);
+    if (result != null) result.value = event
   }
 
-  public void input(E event) {
-
-  }
-
-  @Override
-  public void onDestroy(@NonNull LifecycleOwner owner) {
-    DefaultLifecycleObserver.super.onDestroy(owner);
-    boolean isFragment = owner instanceof Fragment;
-    for (Map.Entry<Integer, LifecycleOwner> entry : isFragment ? mFragmentOwner.entrySet() : mOwner.entrySet()) {
-      LifecycleOwner owner1 = entry.getValue();
-      if (owner1.equals(owner)) {
-        Integer key = entry.getKey();
-        mOwner.remove(key);
-        if (isFragment) mFragmentOwner.remove(key);
-        for (MutableResult<E> mutableResult : mResults) {
-          mutableResult.removeObserver(Objects.requireNonNull(mObservers.get(key)));
+  open fun input(event: E) {}
+  override fun onDestroy(owner: LifecycleOwner) {
+    super@DefaultLifecycleObserver.onDestroy(owner)
+    val isFragment = owner is Fragment
+    for ((key, owner1) in if (isFragment) mFragmentOwner.entries else mOwner.entries) {
+      if (owner1 == owner) {
+        mOwner.remove(key)
+        if (isFragment) mFragmentOwner.remove(key)
+        for (mutableResult in mResults) {
+          mutableResult.removeObserver(
+            Objects.requireNonNull(
+              mObservers[key]
+            )
+          )
         }
-        mObservers.remove(key);
-        break;
+        mObservers.remove(key)
+        break
       }
     }
-    if (mObservers.size() == 0) {
-      mResults.clear();
+    if (mObservers.size == 0) {
+      mResults.clear()
     }
+  }
+
+  companion object {
+    private const val DEFAULT_QUEUE_LENGTH = 10
   }
 }
-

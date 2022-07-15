@@ -1,387 +1,411 @@
-package com.kunminx.purenote.ui.view;
+package com.kunminx.purenote.ui.view
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.PointF;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
-
-import com.kunminx.purenote.R;
+import android.animation.Animator
+import androidx.navigation.NavController.navigate
+import androidx.navigation.NavController.navigateUp
+import com.kunminx.architecture.ui.page.BaseFragment
+import com.kunminx.purenote.ui.page.ListFragment.ListViewModel
+import com.kunminx.purenote.domain.request.NoteRequester
+import com.kunminx.purenote.domain.message.PageMessenger
+import com.kunminx.purenote.ui.adapter.NoteAdapter
+import com.kunminx.purenote.domain.event.NoteEvent
+import com.kunminx.purenote.R
+import com.kunminx.purenote.ui.page.EditorFragment
+import com.kunminx.architecture.ui.page.BaseActivity
+import com.kunminx.purenote.domain.request.ComplexRequester
+import com.kunminx.purenote.domain.event.ComplexEvent
+import com.kunminx.purenote.ui.page.EditorFragment.EditorViewModel
+import android.text.TextUtils
+import com.kunminx.architecture.utils.ToastUtils
+import android.text.Editable
+import androidx.navigation.NavController
+import android.os.Bundle
+import kotlin.jvm.JvmOverloads
+import android.graphics.PointF
+import com.kunminx.purenote.ui.view.SwipeMenuLayout
+import android.content.res.TypedArray
+import android.view.View.MeasureSpec
+import android.view.ViewGroup.MarginLayoutParams
+import android.animation.ValueAnimator
+import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.view.animation.OvershootInterpolator
+import android.animation.AnimatorListenerAdapter
+import android.content.Context
+import android.view.animation.AccelerateInterpolator
+import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
+import android.os.Parcelable
+import androidx.room.PrimaryKey
+import androidx.room.ColumnInfo
+import android.os.Parcel
+import android.util.AttributeSet
+import android.view.*
+import androidx.room.Dao
+import androidx.room.OnConflictStrategy
+import androidx.room.Delete
+import androidx.room.Database
+import androidx.room.RoomDatabase
+import com.kunminx.purenote.data.repo.NoteDao
+import com.kunminx.purenote.data.repo.NoteDataBase
+import com.kunminx.architecture.data.response.DataResult
+import com.kunminx.architecture.data.response.AsyncTask.ActionStart
+import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
+import com.kunminx.purenote.data.repo.DataRepository
+import androidx.room.Room
+import com.kunminx.architecture.domain.dispatch.MviDispatcher
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 /**
  * Created by zhangxutong .
  * Date: 16/04/24
  */
-public class SwipeMenuLayout extends ViewGroup {
-  private static final String TAG = "zxt/SwipeMenuLayout";
+class SwipeMenuLayout @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0
+) : ViewGroup(context, attrs, defStyleAttr) {
+  private var mScaleTouchSlop = 0
+  private var mMaxVelocity = 0
+  private var mPointerId = 0
+  private var mRightMenuWidths = 0
+  private var mLimit = 0
+  private var mContentView: View? = null
+  private val mLastP = PointF()
+  private var isUnMoved = true
+  private val mFirstP = PointF()
+  private var isUserSwiped = false
+  private var mVelocityTracker: VelocityTracker? = null
+  var isSwipeEnable = false
+  var isIos = false
+    private set
+  private var iosInterceptFlag = false
+  var isLeftSwipe = false
+    private set
 
-  private int mScaleTouchSlop;
-  private int mMaxVelocity;
-  private int mPointerId;
-  private int mRightMenuWidths;
-  private int mLimit;
-  private View mContentView;
-  private final PointF mLastP = new PointF();
-  private boolean isUnMoved = true;
-  private final PointF mFirstP = new PointF();
-  private boolean isUserSwiped;
-  private static SwipeMenuLayout mViewCache;
-  private static boolean isTouching;
-  private VelocityTracker mVelocityTracker;
-  private boolean isSwipeEnable;
-  private boolean isIos;
-  private boolean iosInterceptFlag;
-  private boolean isLeftSwipe;
-
-  public SwipeMenuLayout(Context context) {
-    this(context, null);
+  fun setIos(ios: Boolean): SwipeMenuLayout {
+    isIos = ios
+    return this
   }
 
-  public SwipeMenuLayout(Context context, AttributeSet attrs) {
-    this(context, attrs, 0);
+  fun setLeftSwipe(leftSwipe: Boolean): SwipeMenuLayout {
+    isLeftSwipe = leftSwipe
+    return this
   }
 
-  public SwipeMenuLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    init(context, attrs, defStyleAttr);
-  }
-
-  public boolean isSwipeEnable() {
-    return isSwipeEnable;
-  }
-
-  public void setSwipeEnable(boolean swipeEnable) {
-    isSwipeEnable = swipeEnable;
-  }
-
-  public boolean isIos() {
-    return isIos;
-  }
-
-  public SwipeMenuLayout setIos(boolean ios) {
-    isIos = ios;
-    return this;
-  }
-
-  public boolean isLeftSwipe() {
-    return isLeftSwipe;
-  }
-
-  public SwipeMenuLayout setLeftSwipe(boolean leftSwipe) {
-    isLeftSwipe = leftSwipe;
-    return this;
-  }
-
-  public static SwipeMenuLayout getViewCache() {
-    return mViewCache;
-  }
-
-  private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-    mScaleTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
-    mMaxVelocity = ViewConfiguration.get(context).getScaledMaximumFlingVelocity();
-    isSwipeEnable = true;
-    isIos = true;
-    isLeftSwipe = true;
-    TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SwipeMenuLayout, defStyleAttr, 0);
-    int count = ta.getIndexCount();
-    for (int i = 0; i < count; i++) {
-      int attr = ta.getIndex(i);
+  private fun init(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
+    mScaleTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    mMaxVelocity = ViewConfiguration.get(context).scaledMaximumFlingVelocity
+    isSwipeEnable = true
+    isIos = true
+    isLeftSwipe = true
+    val ta =
+      context.theme.obtainStyledAttributes(attrs, R.styleable.SwipeMenuLayout, defStyleAttr, 0)
+    val count = ta.indexCount
+    for (i in 0 until count) {
+      val attr = ta.getIndex(i)
       if (attr == R.styleable.SwipeMenuLayout_swipeEnable) {
-        isSwipeEnable = ta.getBoolean(attr, true);
+        isSwipeEnable = ta.getBoolean(attr, true)
       } else if (attr == R.styleable.SwipeMenuLayout_ios) {
-        isIos = ta.getBoolean(attr, true);
+        isIos = ta.getBoolean(attr, true)
       } else if (attr == R.styleable.SwipeMenuLayout_leftSwipe) {
-        isLeftSwipe = ta.getBoolean(attr, true);
+        isLeftSwipe = ta.getBoolean(attr, true)
       }
     }
-    ta.recycle();
+    ta.recycle()
   }
 
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    setClickable(true);
-    mRightMenuWidths = 0;
-    int height = 0;
-    int contentWidth = 0;
-    int childCount = getChildCount();
-    final boolean measureMatchParentChildren = MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
-    boolean isNeedMeasureChildHeight = false;
-    for (int i = 0; i < childCount; i++) {
-      View childView = getChildAt(i);
-      childView.setClickable(true);
-      if (childView.getVisibility() != GONE) {
-        measureChild(childView, widthMeasureSpec, heightMeasureSpec);
-        final MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
-        height = Math.max(height, childView.getMeasuredHeight());
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    isClickable = true
+    mRightMenuWidths = 0
+    var height = 0
+    var contentWidth = 0
+    val childCount = childCount
+    val measureMatchParentChildren = MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY
+    var isNeedMeasureChildHeight = false
+    for (i in 0 until childCount) {
+      val childView = getChildAt(i)
+      childView.isClickable = true
+      if (childView.visibility != GONE) {
+        measureChild(childView, widthMeasureSpec, heightMeasureSpec)
+        val lp = childView.layoutParams as MarginLayoutParams
+        height = Math.max(height, childView.measuredHeight)
         if (measureMatchParentChildren && lp.height == LayoutParams.MATCH_PARENT) {
-          isNeedMeasureChildHeight = true;
+          isNeedMeasureChildHeight = true
         }
         if (i > 0) {
-          mRightMenuWidths += childView.getMeasuredWidth();
+          mRightMenuWidths += childView.measuredWidth
         } else {
-          mContentView = childView;
-          contentWidth = childView.getMeasuredWidth();
+          mContentView = childView
+          contentWidth = childView.measuredWidth
         }
       }
     }
-    setMeasuredDimension(getPaddingLeft() + getPaddingRight() + contentWidth,
-            height + getPaddingTop() + getPaddingBottom());
-    mLimit = mRightMenuWidths * 4 / 10;
+    setMeasuredDimension(
+      paddingLeft + paddingRight + contentWidth,
+      height + paddingTop + paddingBottom
+    )
+    mLimit = mRightMenuWidths * 4 / 10
     if (isNeedMeasureChildHeight) {
-      forceUniformHeight(childCount, widthMeasureSpec);
+      forceUniformHeight(childCount, widthMeasureSpec)
     }
   }
 
-  @Override
-  public LayoutParams generateLayoutParams(AttributeSet attrs) {
-    return new MarginLayoutParams(getContext(), attrs);
+  override fun generateLayoutParams(attrs: AttributeSet): LayoutParams {
+    return MarginLayoutParams(context, attrs)
   }
 
-  private void forceUniformHeight(int count, int widthMeasureSpec) {
-    int uniformMeasureSpec = MeasureSpec.makeMeasureSpec(getMeasuredHeight(),
-            MeasureSpec.EXACTLY);
-    for (int i = 0; i < count; ++i) {
-      final View child = getChildAt(i);
-      if (child.getVisibility() != GONE) {
-        MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+  private fun forceUniformHeight(count: Int, widthMeasureSpec: Int) {
+    val uniformMeasureSpec = MeasureSpec.makeMeasureSpec(
+      measuredHeight,
+      MeasureSpec.EXACTLY
+    )
+    for (i in 0 until count) {
+      val child = getChildAt(i)
+      if (child.visibility != GONE) {
+        val lp = child.layoutParams as MarginLayoutParams
         if (lp.height == LayoutParams.MATCH_PARENT) {
-          int oldWidth = lp.width;
-          lp.width = child.getMeasuredWidth();
-          measureChildWithMargins(child, widthMeasureSpec, 0, uniformMeasureSpec, 0);
-          lp.width = oldWidth;
+          val oldWidth = lp.width
+          lp.width = child.measuredWidth
+          measureChildWithMargins(child, widthMeasureSpec, 0, uniformMeasureSpec, 0)
+          lp.width = oldWidth
         }
       }
     }
   }
 
-  @Override
-  protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    int childCount = getChildCount();
-    int left = getPaddingLeft();
-    int right = getPaddingLeft();
-    for (int i = 0; i < childCount; i++) {
-      View childView = getChildAt(i);
-      if (childView.getVisibility() != GONE) {
+  override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+    val childCount = childCount
+    var left = paddingLeft
+    var right = paddingLeft
+    for (i in 0 until childCount) {
+      val childView = getChildAt(i)
+      if (childView.visibility != GONE) {
         if (i == 0) {
-          childView.layout(left, getPaddingTop(), left + childView.getMeasuredWidth(), getPaddingTop() + childView.getMeasuredHeight());
-          left = left + childView.getMeasuredWidth();
+          childView.layout(
+            left,
+            paddingTop,
+            left + childView.measuredWidth,
+            paddingTop + childView.measuredHeight
+          )
+          left = left + childView.measuredWidth
         } else {
           if (isLeftSwipe) {
-            childView.layout(left, getPaddingTop(), left + childView.getMeasuredWidth(), getPaddingTop() + childView.getMeasuredHeight());
-            left = left + childView.getMeasuredWidth();
+            childView.layout(
+              left,
+              paddingTop,
+              left + childView.measuredWidth,
+              paddingTop + childView.measuredHeight
+            )
+            left = left + childView.measuredWidth
           } else {
-            childView.layout(right - childView.getMeasuredWidth(), getPaddingTop(), right, getPaddingTop() + childView.getMeasuredHeight());
-            right = right - childView.getMeasuredWidth();
+            childView.layout(
+              right - childView.measuredWidth,
+              paddingTop,
+              right,
+              paddingTop + childView.measuredHeight
+            )
+            right = right - childView.measuredWidth
           }
         }
       }
     }
   }
 
-  @Override
-  public boolean dispatchTouchEvent(MotionEvent ev) {
+  override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
     if (isSwipeEnable) {
-      acquireVelocityTracker(ev);
-      final VelocityTracker verTracker = mVelocityTracker;
-      switch (ev.getAction()) {
-        case MotionEvent.ACTION_DOWN:
-          isUserSwiped = false;
-          isUnMoved = true;
-          iosInterceptFlag = false;
-          if (isTouching) return false;
-          else isTouching = true;
-          mLastP.set(ev.getRawX(), ev.getRawY());
-          mFirstP.set(ev.getRawX(), ev.getRawY());
-          if (mViewCache != null) {
-            if (mViewCache != this) {
-              mViewCache.smoothClose();
-              iosInterceptFlag = isIos;
+      acquireVelocityTracker(ev)
+      val verTracker = mVelocityTracker
+      when (ev.action) {
+        MotionEvent.ACTION_DOWN -> {
+          isUserSwiped = false
+          isUnMoved = true
+          iosInterceptFlag = false
+          if (isTouching) return false else isTouching = true
+          mLastP[ev.rawX] = ev.rawY
+          mFirstP[ev.rawX] = ev.rawY
+          if (viewCache != null) {
+            if (viewCache !== this) {
+              viewCache!!.smoothClose()
+              iosInterceptFlag = isIos
             }
-            getParent().requestDisallowInterceptTouchEvent(true);
+            parent.requestDisallowInterceptTouchEvent(true)
           }
-          mPointerId = ev.getPointerId(0);
-          break;
-        case MotionEvent.ACTION_MOVE:
-          if (iosInterceptFlag) break;
-          float gap = mLastP.x - ev.getRawX();
-          if (Math.abs(gap) > 10 || Math.abs(getScrollX()) > 10) {
-            getParent().requestDisallowInterceptTouchEvent(true);
+          mPointerId = ev.getPointerId(0)
+        }
+        MotionEvent.ACTION_MOVE -> {
+          if (iosInterceptFlag) break
+          val gap = mLastP.x - ev.rawX
+          if (Math.abs(gap) > 10 || Math.abs(scrollX) > 10) {
+            parent.requestDisallowInterceptTouchEvent(true)
           }
-          if (Math.abs(gap) > mScaleTouchSlop) isUnMoved = false;
-          scrollBy((int) (gap), 0);
+          if (Math.abs(gap) > mScaleTouchSlop) isUnMoved = false
+          scrollBy(gap.toInt(), 0)
           if (isLeftSwipe) {
-            if (getScrollX() < 0) scrollTo(0, 0);
-            if (getScrollX() > mRightMenuWidths) scrollTo(mRightMenuWidths, 0);
+            if (scrollX < 0) scrollTo(0, 0)
+            if (scrollX > mRightMenuWidths) scrollTo(mRightMenuWidths, 0)
           } else {
-            if (getScrollX() < -mRightMenuWidths) scrollTo(-mRightMenuWidths, 0);
-            if (getScrollX() > 0) scrollTo(0, 0);
+            if (scrollX < -mRightMenuWidths) scrollTo(-mRightMenuWidths, 0)
+            if (scrollX > 0) scrollTo(0, 0)
           }
-          mLastP.set(ev.getRawX(), ev.getRawY());
-          break;
-        case MotionEvent.ACTION_UP:
-        case MotionEvent.ACTION_CANCEL:
-          if (Math.abs(ev.getRawX() - mFirstP.x) > mScaleTouchSlop) {
-            isUserSwiped = true;
+          mLastP[ev.rawX] = ev.rawY
+        }
+        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+          if (Math.abs(ev.rawX - mFirstP.x) > mScaleTouchSlop) {
+            isUserSwiped = true
           }
-
           if (!iosInterceptFlag) {
-            verTracker.computeCurrentVelocity(1000, mMaxVelocity);
-            final float velocityX = verTracker.getXVelocity(mPointerId);
+            verTracker!!.computeCurrentVelocity(1000, mMaxVelocity.toFloat())
+            val velocityX = verTracker.getXVelocity(mPointerId)
             if (Math.abs(velocityX) > 1000) {
               if (velocityX < -1000) {
-                if (isLeftSwipe) smoothExpand();
-                else smoothClose();
+                if (isLeftSwipe) smoothExpand() else smoothClose()
               } else {
-                if (isLeftSwipe) smoothClose();
-                else smoothExpand();
+                if (isLeftSwipe) smoothClose() else smoothExpand()
               }
             } else {
-              if (Math.abs(getScrollX()) > mLimit) smoothExpand();
-              else smoothClose();
+              if (Math.abs(scrollX) > mLimit) smoothExpand() else smoothClose()
             }
           }
-          releaseVelocityTracker();
-          isTouching = false;
-          break;
-        default:
-          break;
+          releaseVelocityTracker()
+          isTouching = false
+        }
+        else -> {}
       }
     }
-    return super.dispatchTouchEvent(ev);
+    return super.dispatchTouchEvent(ev)
   }
 
-  @Override
-  public boolean onInterceptTouchEvent(MotionEvent ev) {
+  override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
     if (isSwipeEnable) {
-      switch (ev.getAction()) {
-        case MotionEvent.ACTION_MOVE:
-          if (Math.abs(ev.getRawX() - mFirstP.x) > mScaleTouchSlop) return true;
-          break;
-        case MotionEvent.ACTION_UP:
+      when (ev.action) {
+        MotionEvent.ACTION_MOVE -> if (Math.abs(ev.rawX - mFirstP.x) > mScaleTouchSlop) return true
+        MotionEvent.ACTION_UP -> {
           if (isLeftSwipe) {
-            if (getScrollX() > mScaleTouchSlop) {
-              if (ev.getX() < getWidth() - getScrollX()) {
-                if (isUnMoved) smoothClose();
-                return true;
+            if (scrollX > mScaleTouchSlop) {
+              if (ev.x < width - scrollX) {
+                if (isUnMoved) smoothClose()
+                return true
               }
             }
           } else {
-            if (-getScrollX() > mScaleTouchSlop) {
-              if (ev.getX() > -getScrollX()) {
-                if (isUnMoved) smoothClose();
-                return true;
+            if (-scrollX > mScaleTouchSlop) {
+              if (ev.x > -scrollX) {
+                if (isUnMoved) smoothClose()
+                return true
               }
             }
           }
-          if (isUserSwiped) return true;
-          break;
+          if (isUserSwiped) return true
+        }
       }
       if (iosInterceptFlag) {
-        return true;
+        return true
       }
     }
-    return super.onInterceptTouchEvent(ev);
+    return super.onInterceptTouchEvent(ev)
   }
 
-  private ValueAnimator mExpandAnim, mCloseAnim;
-
-  private boolean isExpand;
-
-  public void smoothExpand() {
-    mViewCache = SwipeMenuLayout.this;
+  private var mExpandAnim: ValueAnimator? = null
+  private var mCloseAnim: ValueAnimator? = null
+  private var isExpand = false
+  fun smoothExpand() {
+    viewCache = this@SwipeMenuLayout
     if (null != mContentView) {
-      mContentView.setLongClickable(false);
+      mContentView!!.isLongClickable = false
     }
-
-    cancelAnim();
-    mExpandAnim = ValueAnimator.ofInt(getScrollX(), isLeftSwipe ? mRightMenuWidths : -mRightMenuWidths);
-    mExpandAnim.addUpdateListener(animation -> scrollTo((Integer) animation.getAnimatedValue(), 0));
-    mExpandAnim.setInterpolator(new OvershootInterpolator());
-    mExpandAnim.addListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        isExpand = true;
+    cancelAnim()
+    mExpandAnim =
+      ValueAnimator.ofInt(scrollX, if (isLeftSwipe) mRightMenuWidths else -mRightMenuWidths)
+    mExpandAnim.addUpdateListener(AnimatorUpdateListener { animation: ValueAnimator ->
+      scrollTo(
+        (animation.animatedValue as Int), 0
+      )
+    })
+    mExpandAnim.setInterpolator(OvershootInterpolator())
+    mExpandAnim.addListener(object : AnimatorListenerAdapter() {
+      override fun onAnimationEnd(animation: Animator) {
+        isExpand = true
       }
-    });
-    mExpandAnim.setDuration(300).start();
+    })
+    mExpandAnim.setDuration(300).start()
   }
 
-  private void cancelAnim() {
-    if (mCloseAnim != null && mCloseAnim.isRunning()) {
-      mCloseAnim.cancel();
+  private fun cancelAnim() {
+    if (mCloseAnim != null && mCloseAnim!!.isRunning) {
+      mCloseAnim!!.cancel()
     }
-    if (mExpandAnim != null && mExpandAnim.isRunning()) {
-      mExpandAnim.cancel();
+    if (mExpandAnim != null && mExpandAnim!!.isRunning) {
+      mExpandAnim!!.cancel()
     }
   }
 
-  public void smoothClose() {
-    mViewCache = null;
+  fun smoothClose() {
+    viewCache = null
     if (null != mContentView) {
-      mContentView.setLongClickable(true);
+      mContentView!!.isLongClickable = true
     }
-
-    cancelAnim();
-    mCloseAnim = ValueAnimator.ofInt(getScrollX(), 0);
-    mCloseAnim.addUpdateListener(animation -> scrollTo((Integer) animation.getAnimatedValue(), 0));
-    mCloseAnim.setInterpolator(new AccelerateInterpolator());
-    mCloseAnim.addListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        isExpand = false;
-
+    cancelAnim()
+    mCloseAnim = ValueAnimator.ofInt(scrollX, 0)
+    mCloseAnim.addUpdateListener(AnimatorUpdateListener { animation: ValueAnimator ->
+      scrollTo(
+        (animation.animatedValue as Int), 0
+      )
+    })
+    mCloseAnim.setInterpolator(AccelerateInterpolator())
+    mCloseAnim.addListener(object : AnimatorListenerAdapter() {
+      override fun onAnimationEnd(animation: Animator) {
+        isExpand = false
       }
-    });
-    mCloseAnim.setDuration(300).start();
+    })
+    mCloseAnim.setDuration(300).start()
   }
 
-  private void acquireVelocityTracker(final MotionEvent event) {
+  private fun acquireVelocityTracker(event: MotionEvent) {
     if (null == mVelocityTracker) {
-      mVelocityTracker = VelocityTracker.obtain();
+      mVelocityTracker = VelocityTracker.obtain()
     }
-    mVelocityTracker.addMovement(event);
+    mVelocityTracker!!.addMovement(event)
   }
 
-  private void releaseVelocityTracker() {
+  private fun releaseVelocityTracker() {
     if (null != mVelocityTracker) {
-      mVelocityTracker.clear();
-      mVelocityTracker.recycle();
-      mVelocityTracker = null;
+      mVelocityTracker!!.clear()
+      mVelocityTracker!!.recycle()
+      mVelocityTracker = null
     }
   }
 
-  @Override
-  protected void onDetachedFromWindow() {
-    if (this == mViewCache) {
-      mViewCache.smoothClose();
-      mViewCache = null;
+  override fun onDetachedFromWindow() {
+    if (this === viewCache) {
+      viewCache!!.smoothClose()
+      viewCache = null
     }
-    super.onDetachedFromWindow();
+    super.onDetachedFromWindow()
   }
 
-  @Override
-  public boolean performLongClick() {
-    if (Math.abs(getScrollX()) > mScaleTouchSlop) {
-      return false;
-    }
-    return super.performLongClick();
+  override fun performLongClick(): Boolean {
+    return if (Math.abs(scrollX) > mScaleTouchSlop) {
+      false
+    } else super.performLongClick()
   }
 
-  public void quickClose() {
-    if (this == mViewCache) {
-      cancelAnim();
-      mViewCache.scrollTo(0, 0);
-      mViewCache = null;
+  fun quickClose() {
+    if (this === viewCache) {
+      cancelAnim()
+      viewCache!!.scrollTo(0, 0)
+      viewCache = null
     }
+  }
+
+  companion object {
+    private const val TAG = "zxt/SwipeMenuLayout"
+    var viewCache: SwipeMenuLayout? = null
+      private set
+    private var isTouching = false
+  }
+
+  init {
+    init(context, attrs, defStyleAttr)
   }
 }
