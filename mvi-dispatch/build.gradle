@@ -57,7 +57,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation 'com.kunminx.arch:unpeek-livedata:7.6.0'
     implementation "androidx.core:core-ktx:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.navigation:navigation-runtime:2.5.0"
 }

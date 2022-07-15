@@ -13,13 +13,6 @@ import kotlinx.coroutines.launch
  */
 class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
   /**
-   * TODO tip 1：可初始化配置队列长度，自动丢弃队首过时消息
-   */
-  override fun initQueueMaxLength(): Int {
-    return 5
-  }
-
-  /**
    * TODO tip 2：
    *  作为 '唯一可信源'，接收发自页面消息，内部统一处理业务逻辑，并通过 sendResult 结果分发。
    *  ~

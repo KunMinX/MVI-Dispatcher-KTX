@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
  * Create by KunMinX at 2022/7/3
  */
 open class MviDispatcherKTX<E> : ViewModel() {
-  private val _sharedFlow = MutableSharedFlow<E>(
+  private val _sharedFlow: MutableSharedFlow<E> = MutableSharedFlow(
     onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    extraBufferCapacity = initQueueMaxLength()
+    extraBufferCapacity = DEFAULT_QUEUE_LENGTH
   )
 
   fun output(activity: AppCompatActivity?, observer: (E) -> Unit) {
@@ -33,10 +33,6 @@ open class MviDispatcherKTX<E> : ViewModel() {
         _sharedFlow.collect { observer.invoke(it) }
       }
     }
-  }
-
-  protected open fun initQueueMaxLength(): Int {
-    return DEFAULT_QUEUE_LENGTH
   }
 
   protected suspend fun sendResult(event: E) {
