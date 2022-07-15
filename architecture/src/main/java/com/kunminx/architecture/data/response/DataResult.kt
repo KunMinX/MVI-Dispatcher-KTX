@@ -45,8 +45,4 @@ class DataResult<T> {
     result = entity
     responseStatus = ResponseStatus()
   }
-
-  interface Result<T> {
-    fun onResult(dataResult: DataResult<T>?)
-  }
 }

@@ -13,7 +13,7 @@ import com.kunminx.architecture.domain.queue.FixedLengthList
 /**
  * Create by KunMinX at 2022/7/3
  */
-open class MviDispatcher<E : Event<*, *>?> : ViewModel(), DefaultLifecycleObserver {
+open class MviDispatcher<E : Event<*, *>> : ViewModel(), DefaultLifecycleObserver {
   private val mOwner = HashMap<Int, LifecycleOwner>()
   private val mFragmentOwner = HashMap<Int, LifecycleOwner>()
   private val mObservers = HashMap<Int, Observer<E>>()
@@ -87,7 +87,7 @@ open class MviDispatcher<E : Event<*, *>?> : ViewModel(), DefaultLifecycleObserv
         mOwner.remove(key)
         if (isFragment) mFragmentOwner.remove(key)
         for (mutableResult in mResults) {
-          mObservers.get(key)?.let { mutableResult.removeObserver(it) }
+          mObservers[key]?.let { mutableResult.removeObserver(it) }
         }
         mObservers.remove(key)
         break

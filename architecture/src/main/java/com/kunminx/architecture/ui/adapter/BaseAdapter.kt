@@ -8,12 +8,12 @@ import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
 /**
  * Create by KunMinX at 2020/6/24
  */
-abstract class BaseAdapter<T, V : ViewBinding?> : RecyclerView.Adapter<BaseHolder<V>>() {
+abstract class BaseAdapter<T, V : ViewBinding> : RecyclerView.Adapter<BaseHolder<V>>() {
   private val data: MutableList<T>
   protected var onItemClick: ((Int, Int, T) -> Unit)? = null
-  fun setData(data: List<T>?) {
+  fun setData(data: MutableList<T>) {
     this.data.clear()
-    this.data.addAll(data!!)
+    this.data.addAll(data)
     notifyDataSetChanged()
   }
 
@@ -21,7 +21,7 @@ abstract class BaseAdapter<T, V : ViewBinding?> : RecyclerView.Adapter<BaseHolde
     this.onItemClick = onItemClick
   }
 
-  protected fun getData(): List<T> {
+  protected fun getData(): MutableList<T> {
     return data
   }
 
@@ -33,8 +33,9 @@ abstract class BaseAdapter<T, V : ViewBinding?> : RecyclerView.Adapter<BaseHolde
     onBindingData(holder, data[position], position)
   }
 
-  protected abstract fun onBindingData(holder: BaseHolder<V>?, t: T, position: Int)
-  protected abstract fun onBindingView(viewGroup: ViewGroup?): V
+  protected abstract fun onBindingData(holder: BaseHolder<V>, t: T, position: Int)
+  protected abstract fun onBindingView(viewGroup: ViewGroup): V
+
   override fun getItemCount(): Int {
     return data.size
   }

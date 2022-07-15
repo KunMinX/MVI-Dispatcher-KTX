@@ -2,8 +2,6 @@ package com.kunminx.architecture.data.response
 
 import android.annotation.SuppressLint
 import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -12,18 +10,10 @@ import io.reactivex.schedulers.Schedulers
  */
 object AsyncTask {
   @SuppressLint("CheckResult")
-  fun <T : Any> doAction(start: ActionStart<T>, end: ActionEnd<T>) {
-    Observable.create(ObservableOnSubscribe { emitter: ObservableEmitter<T> -> emitter.onNext(start.data) } as ObservableOnSubscribe<T>)
+  fun <T : Any> doAction(start: () -> T, end: (t: T) -> Unit) {
+    Observable.create { emitter -> emitter.onNext(start.invoke()) }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { t: T -> end.onResult(t) }
-  }
-
-  interface ActionStart<T> {
-    val data: T
-  }
-
-  interface ActionEnd<T> {
-    fun onResult(t: T)
+      .subscribe { t: T -> end.invoke(t) }
   }
 }

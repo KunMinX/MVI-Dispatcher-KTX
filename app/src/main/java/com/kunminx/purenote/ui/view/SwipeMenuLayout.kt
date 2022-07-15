@@ -1,59 +1,16 @@
 package com.kunminx.purenote.ui.view
 
 import android.animation.Animator
-import androidx.navigation.NavController.navigate
-import androidx.navigation.NavController.navigateUp
-import com.kunminx.architecture.ui.page.BaseFragment
-import com.kunminx.purenote.ui.page.ListFragment.ListViewModel
-import com.kunminx.purenote.domain.request.NoteRequester
-import com.kunminx.purenote.domain.message.PageMessenger
-import com.kunminx.purenote.ui.adapter.NoteAdapter
-import com.kunminx.purenote.domain.event.NoteEvent
-import com.kunminx.purenote.R
-import com.kunminx.purenote.ui.page.EditorFragment
-import com.kunminx.architecture.ui.page.BaseActivity
-import com.kunminx.purenote.domain.request.ComplexRequester
-import com.kunminx.purenote.domain.event.ComplexEvent
-import com.kunminx.purenote.ui.page.EditorFragment.EditorViewModel
-import android.text.TextUtils
-import com.kunminx.architecture.utils.ToastUtils
-import android.text.Editable
-import androidx.navigation.NavController
-import android.os.Bundle
-import kotlin.jvm.JvmOverloads
-import android.graphics.PointF
-import com.kunminx.purenote.ui.view.SwipeMenuLayout
-import android.content.res.TypedArray
-import android.view.View.MeasureSpec
-import android.view.ViewGroup.MarginLayoutParams
-import android.animation.ValueAnimator
-import android.animation.ValueAnimator.AnimatorUpdateListener
-import android.view.animation.OvershootInterpolator
 import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
-import android.view.animation.AccelerateInterpolator
-import com.kunminx.architecture.ui.adapter.BaseAdapter.BaseHolder
-import android.os.Parcelable
-import androidx.room.PrimaryKey
-import androidx.room.ColumnInfo
-import android.os.Parcel
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.*
-import androidx.room.Dao
-import androidx.room.OnConflictStrategy
-import androidx.room.Delete
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.kunminx.purenote.data.repo.NoteDao
-import com.kunminx.purenote.data.repo.NoteDataBase
-import com.kunminx.architecture.data.response.DataResult
-import com.kunminx.architecture.data.response.AsyncTask.ActionStart
-import com.kunminx.architecture.data.response.AsyncTask.ActionEnd
-import com.kunminx.purenote.data.repo.DataRepository
-import androidx.room.Room
-import com.kunminx.architecture.domain.dispatch.MviDispatcher
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.android.schedulers.AndroidSchedulers
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.OvershootInterpolator
+import com.kunminx.purenote.R
 
 /**
  * Created by zhangxutong .
@@ -234,21 +191,22 @@ class SwipeMenuLayout @JvmOverloads constructor(
           mPointerId = ev.getPointerId(0)
         }
         MotionEvent.ACTION_MOVE -> {
-          if (iosInterceptFlag) break
-          val gap = mLastP.x - ev.rawX
-          if (Math.abs(gap) > 10 || Math.abs(scrollX) > 10) {
-            parent.requestDisallowInterceptTouchEvent(true)
+          if (!iosInterceptFlag) {
+            val gap = mLastP.x - ev.rawX
+            if (Math.abs(gap) > 10 || Math.abs(scrollX) > 10) {
+              parent.requestDisallowInterceptTouchEvent(true)
+            }
+            if (Math.abs(gap) > mScaleTouchSlop) isUnMoved = false
+            scrollBy(gap.toInt(), 0)
+            if (isLeftSwipe) {
+              if (scrollX < 0) scrollTo(0, 0)
+              if (scrollX > mRightMenuWidths) scrollTo(mRightMenuWidths, 0)
+            } else {
+              if (scrollX < -mRightMenuWidths) scrollTo(-mRightMenuWidths, 0)
+              if (scrollX > 0) scrollTo(0, 0)
+            }
+            mLastP[ev.rawX] = ev.rawY
           }
-          if (Math.abs(gap) > mScaleTouchSlop) isUnMoved = false
-          scrollBy(gap.toInt(), 0)
-          if (isLeftSwipe) {
-            if (scrollX < 0) scrollTo(0, 0)
-            if (scrollX > mRightMenuWidths) scrollTo(mRightMenuWidths, 0)
-          } else {
-            if (scrollX < -mRightMenuWidths) scrollTo(-mRightMenuWidths, 0)
-            if (scrollX > 0) scrollTo(0, 0)
-          }
-          mLastP[ev.rawX] = ev.rawY
         }
         MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
           if (Math.abs(ev.rawX - mFirstP.x) > mScaleTouchSlop) {
@@ -317,54 +275,48 @@ class SwipeMenuLayout @JvmOverloads constructor(
     cancelAnim()
     mExpandAnim =
       ValueAnimator.ofInt(scrollX, if (isLeftSwipe) mRightMenuWidths else -mRightMenuWidths)
-    mExpandAnim.addUpdateListener(AnimatorUpdateListener { animation: ValueAnimator ->
-      scrollTo(
-        (animation.animatedValue as Int), 0
-      )
-    })
-    mExpandAnim.setInterpolator(OvershootInterpolator())
-    mExpandAnim.addListener(object : AnimatorListenerAdapter() {
-      override fun onAnimationEnd(animation: Animator) {
-        isExpand = true
+    with(mExpandAnim) {
+      this?.addUpdateListener { animation: ValueAnimator ->
+        scrollTo((animation.animatedValue as Int), 0)
       }
-    })
-    mExpandAnim.setDuration(300).start()
+      this?.interpolator = OvershootInterpolator()
+      this?.addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+          isExpand = true
+        }
+      })
+      this?.setDuration(300)?.start()
+    }
   }
 
   private fun cancelAnim() {
-    if (mCloseAnim != null && mCloseAnim!!.isRunning) {
-      mCloseAnim!!.cancel()
-    }
-    if (mExpandAnim != null && mExpandAnim!!.isRunning) {
-      mExpandAnim!!.cancel()
-    }
+    if (mCloseAnim != null && mCloseAnim!!.isRunning) mCloseAnim!!.cancel()
+    if (mExpandAnim != null && mExpandAnim!!.isRunning) mExpandAnim!!.cancel()
   }
 
-  fun smoothClose() {
+  private fun smoothClose() {
     viewCache = null
     if (null != mContentView) {
       mContentView!!.isLongClickable = true
     }
     cancelAnim()
     mCloseAnim = ValueAnimator.ofInt(scrollX, 0)
-    mCloseAnim.addUpdateListener(AnimatorUpdateListener { animation: ValueAnimator ->
-      scrollTo(
-        (animation.animatedValue as Int), 0
-      )
-    })
-    mCloseAnim.setInterpolator(AccelerateInterpolator())
-    mCloseAnim.addListener(object : AnimatorListenerAdapter() {
-      override fun onAnimationEnd(animation: Animator) {
-        isExpand = false
+    with(mCloseAnim) {
+      this?.addUpdateListener { animation: ValueAnimator ->
+        scrollTo((animation.animatedValue as Int), 0)
       }
-    })
-    mCloseAnim.setDuration(300).start()
+      this?.interpolator = AccelerateInterpolator()
+      this?.addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+          isExpand = false
+        }
+      })
+      this?.setDuration(300)?.start()
+    }
   }
 
   private fun acquireVelocityTracker(event: MotionEvent) {
-    if (null == mVelocityTracker) {
-      mVelocityTracker = VelocityTracker.obtain()
-    }
+    if (null == mVelocityTracker) mVelocityTracker = VelocityTracker.obtain()
     mVelocityTracker!!.addMovement(event)
   }
 
@@ -400,6 +352,8 @@ class SwipeMenuLayout @JvmOverloads constructor(
 
   companion object {
     private const val TAG = "zxt/SwipeMenuLayout"
+
+    @SuppressLint("StaticFieldLeak")
     var viewCache: SwipeMenuLayout? = null
       private set
     private var isTouching = false
