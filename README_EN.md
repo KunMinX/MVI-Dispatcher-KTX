@@ -26,7 +26,7 @@ In this case, I will show you how MVI-Dispatcher can simplify the otherwise “c
 
 &nbsp;
 
-![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48ol0bwenj219c0q5af0.jpg)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48v3pvrtkj21670q4795.jpg)
 
 &nbsp;
 

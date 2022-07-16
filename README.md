@@ -4,11 +4,11 @@
 
 ### [🌏 English README](https://github.com/KunMinX/MVI-Dispatcher-KTX/blob/main/README_EN.md)
 
-
+&nbsp;
 
 上期[《Google Android 官方架构示例，我在起跑线等你》](https://juejin.cn/post/7117498113983512589)侧重拆解官方架构 “领域层” 设计误区，并给出改善建议 —— 通过 MVI-Dispatcher 替代 Event-ViewModel，
 
-然有小伙伴表示，不仅想要 MVI-Dispatcher，还想看看 Kotlin 下 MVI 实践，以消解现有 Kotlin 示例的云里雾里
+然有小伙伴表示，不仅想要 MVI-Dispatcher，还想看看 Kotlin 版 MVI 实践
 
 ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48npkl348j214a07gaaq.jpg)
 
@@ -30,7 +30,7 @@
 
 &nbsp;
 
-![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48ol0bwenj219c0q5af0.jpg)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48v3pvrtkj21670q4795.jpg)
 
 &nbsp;
 
@@ -60,7 +60,7 @@ implementation 'com.kunminx.arch:mvi-dispatch-ktx:4.5.0-beta'
 
 # What‘s More
 
-本项目由 100% Java [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 项目转换而来，通过横向对比 MVI-Dispatcher 项目或查阅 git commit 记录 ，可快速了解 Android Studio 一键转换后，为入乡随俗遵循 Kotlin 特性/风格/思维，我们还需手动完成哪些调整修缮。
+本项目由 100% Java [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 项目改造而来，通过横向对比 MVI-Dispatcher 项目或查阅 git commit 记录 ，可快速了解 Android Studio 一键转换后，为入乡随俗遵循 Kotlin 特性/风格/思维，我们还需手动完成哪些调整修缮。
 
 ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48o423017j210i0u0djm.jpg)
 
