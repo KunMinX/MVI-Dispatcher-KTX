@@ -4,7 +4,7 @@
 
 ### [🌏 English README](https://github.com/KunMinX/MVI-Dispatcher-KTX/blob/main/README_EN.md)
 
-
+&nbsp;
 
 上期[《Google Android 官方架构示例，我在起跑线等你》](https://juejin.cn/post/7117498113983512589)侧重拆解官方架构 “领域层” 设计误区，并给出改善建议 —— 通过 MVI-Dispatcher 替代 Event-ViewModel，
 
