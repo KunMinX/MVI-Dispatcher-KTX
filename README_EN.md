@@ -2,17 +2,17 @@
 
 &nbsp;
 
-# Foreword
+The last issue of ["Google Android Official Architecture Example, I'm waiting for you at the starting line"](https://medium.com/@kunminx/google-android-official-architecture-example-i-am-waiting-for-you-at-the-starting-line-b4752d97f283) focused on dismantling the design misunderstandings of the "domain layer" of the official architecture, and gave suggestions for improvement - replacing Event-ViewModel with MVI-Dispatcher,
 
-With the popularity of LiveData and ViewModel, developers also try to eliminate mutable boilerplate code by “local MVI pattern”.
+However, some friends said that they not only want MVI-Dispatcher, but also want to see the MVI practice under Kotlin to hedge the fog of various examples.
 
-According to the actual situation, most of the company’s “ancient giant projects” still need to upgrade and maintain Java, and Java is a frequent source of consistency problems, and “architectural components” are urgently needed to help eliminate hidden dangers.
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48npkl348j214a07gaaq.jpg)
 
-Unfortunately, the current Android MVI articles or code cases are all written based on Kotlin language features, which are not friendly to Java, which makes Java developers interested in MVI mode in a dilemma.
+Therefore, in this issue, we come with MVI-Dispatcher-KTX and carefully polished example projects, I believe you will be refreshed after reading.
 
-The good news is that this issue comes with a well-polished MVI practice case.
+&nbsp;
 
-|                          Collect or topped                   |                           Smooth transition                  |                           Delete notes                           |
+|                      Collect or topped                       |                      Smooth transition                       |                         Delete notes                         |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h3vup9ck57g20u01o0hbm.gif) | ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h3vupfbex2g20u01o0qv6.gif) | ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h3vuplwiuqg20u01o0x2t.gif) |
 
@@ -26,51 +26,55 @@ In this case, I will show you how MVI-Dispatcher can simplify the otherwise “c
 
 &nbsp;
 
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48ol0bwenj219c0q5af0.jpg)
+
+&nbsp;
+
 ```Groovy
-implementation 'com.kunminx.arch:mvi-dispatch:4.4.0-beta'
+implementation 'com.kunminx.arch:mvi-dispatch-ktx:4.5.0-beta'
 ```
-&nbsp;
-
-![](https://tva1.sinaimg.cn/large/e6c9d24ely1h3vupvpzprj21o40h90wp.jpg)
 
 &nbsp;
 
-MVI-Dispatcher is applicable to Java, through which,
+MVI-Dispatcher is applicable to Kotlin, through which,
 
 > 1.Can completely eliminate mutable boilerplate code, no need to write one line
 >
-> 2.Multiple events can be sent continuously to solve MVI scene LiveData event coverage
+> 2.Multiple events can be sent continuously to support MVI scene
 >
 > 3.High performance fixed length queue, use as you go, run out of it, and never lose events
 >
-> 4.It can prevent team newbies from indiscriminately using mutableLiveData.setValue( ) in Activity/Fragment
+> 4.It can prevent team newbies from indiscriminately using mutableSharedFlow.emit( ) in Activity/Fragment
 >
 > 5.Developers only need to pay attention to input and output, inject events from the unique entry input (), and observe at the unique exit output ()
 >
-> 6.If the new team members are not familiar with LiveData, UnPeekLiveData, mutable and MVI, they can also automatically realize the development of “one-way data flow” based on the simple and easy-to-understand I/O design of MVI-Dispatcher “single entry + single exit”
+> 6.If the new team members are not familiar with Flow, SharedFlow, mutable and MVI, they can also automatically realize the development of “one-way data flow” based on the simple and easy-to-understand I/O design of MVI-Dispatcher “single entry + single exit”
 >
 > 7.It can be seamlessly integrated into jetpack MVVM and other mode projects
 
 &nbsp;
 
-![](https://tva1.sinaimg.cn/large/e6c9d24ely1h3zghmu13ej21j80u0tfn.jpg)
+# What‘s More
 
-&nbsp;
+This project is converted from the 100% Java [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) project. By comparing the MVI-Dispatcher project horizontally or checking the git commit records, you can quickly understand that after the one-click conversion of Android Studio, in order to make the project 100% follow the Kotlin style/thinking, we also What adjustments need to be done manually.
 
-In addition to mastering "Single Source of Truth" best practices in “Simple and Simple” code, you can also get content from this project including:
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48o423017j210i0u0djm.jpg)
 
-1.Clean code style & standard naming conventions
+Different from the experimental examples, MVI-Dispatcher and MVI-Dispatcher-KTX provide the minimum necessary source code implementation to complete a notepad software.
 
-2.In-depth understanding of “view controller” knowledge points & correct use
+Therefore, through this example, you can also obtain content including:
 
-3.Full use of AndroidX and Material Design
-
-4.ConstraintLayout Constraint Layout Best Practices
-
-5.Best Practices for Hex Compound State Management
-
-6.Excellent User Experience & Interaction Design
-
+> 1.Clean code style & standard naming conventions
+>
+> 2.In-depth understanding of “view controller” knowledge points & correct use
+>
+> 3.Full use of AndroidX and Material Design
+>
+> 4.ConstraintLayout Constraint Layout Best Practices
+>
+> 5.Best Practices for Hex Compound State Management
+>
+> 6.Excellent User Experience & Interaction Design
 
 &nbsp;
 
@@ -111,3 +115,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
