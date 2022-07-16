@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.kunminx.architecture.utils.TimeUtils
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -15,18 +16,18 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Note(
   @PrimaryKey
-  var id: String = "",
-  var title: String? = "",
-  var content: String? = "",
+  val id: String,
+  val title: String,
+  val content: String,
   @ColumnInfo(name = "create_time")
-  var createTime: Long = 0,
+  val createTime: Long,
   @ColumnInfo(name = "modify_time")
-  var modifyTime: Long = 0,
-  var type: Int = 0,
+  val modifyTime: Long,
+  val type: Int
 ) : Parcelable {
 
   @Ignore
-  constructor() : this("")
+  constructor() : this("", "", "", 0, 0, 0)
 
   @get:Ignore
   val createDate: String
@@ -38,19 +39,27 @@ data class Note(
 
   @get:Ignore
   val isMarked: Boolean
-    get() = type and TYPE_MARKED != 0
+    get() = mutableType and TYPE_MARKED != 0
 
   @get:Ignore
   val isTopping: Boolean
-    get() = type and TYPE_TOPPING != 0
+    get() = mutableType and TYPE_TOPPING != 0
+
+  @IgnoredOnParcel
+  @Ignore
+  var mutableType: Int = type
 
   @Ignore
   fun toggleType(param: Int) {
-    type = if (type and param != 0) {
-      type and param.inv()
+    mutableType = if (mutableType and param != 0) {
+      mutableType and param.inv()
     } else {
-      type or param
+      mutableType or param
     }
+  }
+
+  fun copy(): Note {
+    return Note(id, title, content, createTime, modifyTime, mutableType)
   }
 
   companion object {

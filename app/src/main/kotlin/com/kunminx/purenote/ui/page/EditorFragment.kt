@@ -36,17 +36,17 @@ class EditorFragment : BaseFragment() {
 
   override fun onInitData() {
     if (arguments != null) {
-      states.tempNote = requireArguments().getParcelable(NOTE)!!
-      states.title = states.tempNote.title!!
-      states.content = states.tempNote.content!!
-      if (TextUtils.isEmpty(states.tempNote.id)) {
+      states.originNote = requireArguments().getParcelable(NOTE)!!
+      states.title = states.originNote!!.title
+      states.content = states.originNote!!.content
+      if (TextUtils.isEmpty(states.originNote!!.id)) {
         binding.etTitle.requestFocus()
         binding.etTitle.post { toggleSoftInput() }
       } else {
-        binding.etTitle.setText(states.tempNote.title)
-        binding.etContent.setText(states.tempNote.content)
+        binding.etTitle.setText(states.originNote!!.title)
+        binding.etContent.setText(states.originNote!!.content)
         binding.tvTitle.text = getString(R.string.last_time_modify)
-        binding.tvTime.text = states.tempNote.modifyDate
+        binding.tvTime.text = states.originNote!!.modifyDate
       }
     }
   }
@@ -74,22 +74,25 @@ class EditorFragment : BaseFragment() {
   }
 
   private fun save(): Boolean {
-    states.tempNote.title = Objects.requireNonNull(binding.etTitle.text).toString()
-    states.tempNote.content = Objects.requireNonNull(binding.etContent.text).toString()
-    if (TextUtils.isEmpty(states.tempNote.title) && TextUtils.isEmpty(states.tempNote.content)
-      || states.tempNote.title == states.title && states.tempNote.content == states.content
-    ) {
+    val title = binding.etTitle.text.toString()
+    val content = binding.etContent.text.toString()
+    if (title.isEmpty() && content.isEmpty() || title == states.title && content == states.content) {
       return nav().navigateUp()
     }
     val time = System.currentTimeMillis()
-    if (TextUtils.isEmpty(states.tempNote.id)) {
-      states.tempNote.createTime = time
-      states.tempNote.id = UUID.randomUUID().toString()
+    if (states.originNote!!.id.isEmpty()) {
+      states.tempNote = Note(UUID.randomUUID().toString(), title, content, time, time, 0)
+    } else {
+      states.tempNote = Note(
+        states.originNote!!.id,
+        title,
+        content,
+        states.originNote!!.createTime,
+        time,
+        states.originNote!!.type
+      )
     }
-    states.tempNote.modifyTime = time
-    val addItem = NoteEvent.AddItem()
-    addItem.note = states.tempNote
-    noteRequester.input(addItem)
+    noteRequester.input(NoteEvent.AddItem().setNote(states.tempNote!!))
     return true
   }
 
@@ -98,7 +101,8 @@ class EditorFragment : BaseFragment() {
   }
 
   class EditorViewModel : ViewModel() {
-    var tempNote: Note = Note()
+    var originNote: Note? = Note()
+    var tempNote: Note? = Note()
     var title: String = ""
     var content: String = ""
   }
