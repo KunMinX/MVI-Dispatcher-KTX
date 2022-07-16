@@ -64,21 +64,9 @@ class ListFragment : BaseFragment() {
   override fun onInput() {
     adapter.setListener { viewId, position, item ->
       when (viewId) {
-        R.id.btn_mark -> {
-          val markItem = NoteEvent.MarkItem()
-          markItem.note = item
-          noteRequester.input(markItem)
-        }
-        R.id.btn_topping -> {
-          val toppingItem = NoteEvent.ToppingItem()
-          toppingItem.note = item
-          noteRequester.input(toppingItem)
-        }
-        R.id.btn_delete -> {
-          val removeItem = NoteEvent.RemoveItem()
-          removeItem.note = item
-          noteRequester.input(removeItem)
-        }
+        R.id.btn_mark -> noteRequester.input(NoteEvent.MarkItem().setNote(item))
+        R.id.btn_topping -> noteRequester.input(NoteEvent.ToppingItem().setNote(item))
+        R.id.btn_delete -> noteRequester.input(NoteEvent.RemoveItem().setNote(item))
         R.id.cl -> EditorFragment.start(nav(), item)
       }
     }
