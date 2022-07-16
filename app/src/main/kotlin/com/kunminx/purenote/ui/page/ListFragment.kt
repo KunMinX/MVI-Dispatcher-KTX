@@ -75,7 +75,7 @@ class ListFragment : BaseFragment() {
   }
 
   override fun onBackPressed(): Boolean {
-    messenger.input(Messages.FinishActivity())
+    messenger.input(Messages.FinishActivity)
     return super.onBackPressed()
   }
 

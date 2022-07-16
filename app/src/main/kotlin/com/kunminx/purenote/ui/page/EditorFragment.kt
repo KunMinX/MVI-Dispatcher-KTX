@@ -58,7 +58,7 @@ class EditorFragment : BaseFragment() {
   override fun onOutput() {
     noteRequester.output(this) { noteEvent ->
       if (noteEvent is NoteEvent.AddItem) {
-        messenger.input(Messages.RefreshNoteList())
+        messenger.input(Messages.RefreshNoteList)
         ToastUtils.showShortToast(getString(R.string.saved))
         nav().navigateUp()
       }
