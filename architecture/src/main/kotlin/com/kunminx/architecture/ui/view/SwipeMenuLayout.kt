@@ -1,4 +1,4 @@
-package com.kunminx.purenote.ui.view
+package com.kunminx.architecture.ui.view
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -10,7 +10,7 @@ import android.util.AttributeSet
 import android.view.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
-import com.kunminx.purenote.R
+import com.kunminx.architecture.R
 
 /**
  * Created by zhangxutong .
