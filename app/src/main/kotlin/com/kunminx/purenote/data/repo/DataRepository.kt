@@ -10,7 +10,8 @@ import kotlinx.coroutines.withContext
 /**
  * Create by KunMinX at 2022/6/14
  */
-class DataRepository private constructor() {
+object DataRepository {
+  private const val DATABASE_NAME = "NOTE_DB.db"
   private val dataBase: NoteDataBase = Room.databaseBuilder(
     Utils.app!!.applicationContext,
     NoteDataBase::class.java, DATABASE_NAME
@@ -39,10 +40,5 @@ class DataRepository private constructor() {
       dataBase.noteDao().deleteNote(note)
     }
     return true
-  }
-
-  companion object {
-    val instance = DataRepository()
-    private const val DATABASE_NAME = "NOTE_DB.db"
   }
 }

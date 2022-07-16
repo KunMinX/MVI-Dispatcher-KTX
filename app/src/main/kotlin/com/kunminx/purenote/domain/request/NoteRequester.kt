@@ -20,16 +20,16 @@ class NoteRequester : MviDispatcherKTX<NoteEvent>() {
   override fun input(event: NoteEvent) {
     viewModelScope.launch {
       when (event) {
-        is NoteEvent.MarkItem -> sendResult(event.copy(DataRepository.instance.updateNote(event.note!!)))
-        is NoteEvent.UpdateItem -> sendResult(event.copy(DataRepository.instance.updateNote(event.note!!)))
-        is NoteEvent.AddItem -> sendResult(event.copy(DataRepository.instance.insertNote(event.note!!)))
-        is NoteEvent.RemoveItem -> sendResult(event.copy(DataRepository.instance.deleteNote(event.note!!)))
+        is NoteEvent.MarkItem -> sendResult(event.copy(DataRepository.updateNote(event.note!!)))
+        is NoteEvent.UpdateItem -> sendResult(event.copy(DataRepository.updateNote(event.note!!)))
+        is NoteEvent.AddItem -> sendResult(event.copy(DataRepository.insertNote(event.note!!)))
+        is NoteEvent.RemoveItem -> sendResult(event.copy(DataRepository.deleteNote(event.note!!)))
         is NoteEvent.GetNoteList -> {
-          DataRepository.instance.getNotes().collect { sendResult(event.copy(it)) }
+          DataRepository.getNotes().collect { sendResult(event.copy(it)) }
         }
         is NoteEvent.ToppingItem -> {
-          val success = DataRepository.instance.updateNote(event.note!!)
-          if (success) DataRepository.instance.getNotes().collect {
+          val success = DataRepository.updateNote(event.note!!)
+          if (success) DataRepository.getNotes().collect {
             sendResult(NoteEvent.GetNoteList(it))
           }
         }
