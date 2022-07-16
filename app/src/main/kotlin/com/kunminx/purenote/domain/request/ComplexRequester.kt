@@ -30,8 +30,8 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
           val event1 = ComplexEvent.ResultTest4(it)
           input(event1)
         }
-        is ComplexEvent.ResultTest2 -> timer().collect { sendResult(event) }
-        is ComplexEvent.ResultTest3 -> sendResult(event)
+        is ComplexEvent.ResultTest2 -> timer(1000).collect { sendResult(event) }
+        is ComplexEvent.ResultTest3 -> timer(1).collect { sendResult(event) }
         is ComplexEvent.ResultTest4 -> sendResult(event)
       }
     }
@@ -39,13 +39,13 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
 
   private fun interval() = flow {
     for (i in 0..Int.MAX_VALUE) {
-      delay(1)
+      delay(100)
       emit(i)
     }
   }
 
-  private fun timer() = flow {
-    delay(200)
+  private fun timer(duration: Long) = flow {
+    delay(duration)
     emit(true)
   }
 }
