@@ -76,6 +76,8 @@ implementation 'com.kunminx.arch:mvi-dispatch-ktx:5.0.0-beta'
 
 [SwipeDelMenuLayout](https://github.com/mcxtzhang/SwipeDelMenuLayout)
 
+[ViewBindingKTX](https://github.com/DylanCaiCoding/ViewBindingKTX)
+
 项目中图标素材来自 [iconfinder](https://www.iconfinder.com/) 提供 **免费授权图片**。
 
 &nbsp;

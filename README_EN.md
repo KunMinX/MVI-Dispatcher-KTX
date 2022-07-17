@@ -86,6 +86,8 @@ Therefore, through this example, you can also obtain content including:
 
 [SwipeDelMenuLayout](https://github.com/mcxtzhang/SwipeDelMenuLayout)
 
+[ViewBindingKTX](https://github.com/DylanCaiCoding/ViewBindingKTX)
+
 The icon material in the project comes from [iconfinder](https://www.iconfinder.com/) provided free licensed images.
 
 &nbsp;

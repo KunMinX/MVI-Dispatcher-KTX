@@ -2,13 +2,11 @@ package com.kunminx.purenote.ui.page
 
 import android.os.Bundle
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.dylanc.viewbinding.binding
 import com.kunminx.architecture.ui.page.BaseFragment
 import com.kunminx.architecture.utils.ToastUtils
 import com.kunminx.purenote.R
@@ -23,16 +21,11 @@ import java.util.*
 /**
  * Create by KunMinX at 2022/6/30
  */
-class EditorFragment : BaseFragment() {
-  private lateinit var binding: FragmentEditorBinding
+class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
+  private val binding: FragmentEditorBinding by binding()
   private val states by viewModels<EditorViewModel>()
   private val noteRequester by viewModels<NoteRequester>()
   private val messenger by activityViewModels<PageMessenger>()
-
-  override fun onInitView(inflater: LayoutInflater, container: ViewGroup?): View {
-    binding = FragmentEditorBinding.inflate(inflater, container, false)
-    return binding.root
-  }
 
   override fun onInitData() {
     if (arguments != null) {

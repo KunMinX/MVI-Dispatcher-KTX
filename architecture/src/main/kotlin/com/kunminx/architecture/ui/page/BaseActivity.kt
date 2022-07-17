@@ -15,7 +15,6 @@
  */
 package com.kunminx.architecture.ui.page
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
@@ -31,12 +30,11 @@ import com.kunminx.architecture.utils.AdaptScreenUtils
  * Create by KunMinX at 19/8/1
  */
 abstract class BaseActivity : AppCompatActivity() {
-  protected abstract fun onInitView()
-  protected fun onInitData() {}
+  protected open fun onInitView() {}
+  protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
 
-  @SuppressLint("SourceLockedOrientationActivity")
   override fun onCreate(savedInstanceState: Bundle?) {
     transparentStatusBar(this)
     super.onCreate(savedInstanceState)

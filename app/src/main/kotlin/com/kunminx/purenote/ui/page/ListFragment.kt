@@ -1,11 +1,10 @@
 package com.kunminx.purenote.ui.page
 
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import com.dylanc.viewbinding.binding
 import com.kunminx.architecture.ui.page.BaseFragment
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
@@ -19,17 +18,15 @@ import com.kunminx.purenote.ui.adapter.NoteAdapter
 /**
  * Create by KunMinX at 2022/6/30
  */
-class ListFragment : BaseFragment() {
-  private lateinit var binding: FragmentListBinding
+class ListFragment : BaseFragment((R.layout.fragment_list)) {
+  private val binding: FragmentListBinding by binding()
   private val states by viewModels<ListViewModel>()
   private val noteRequester by viewModels<NoteRequester>()
   private val messenger by activityViewModels<PageMessenger>()
   private val adapter by lazy { NoteAdapter() }
 
-  override fun onInitView(inflater: LayoutInflater, container: ViewGroup?): View {
-    binding = FragmentListBinding.inflate(layoutInflater, container, false)
+  override fun onInitView() {
     binding.rv.adapter = adapter
-    return binding.root
   }
 
   /**

@@ -20,9 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -33,9 +31,9 @@ import androidx.navigation.fragment.NavHostFragment
 /**
  * Create by KunMinX at 19/7/11
  */
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment(layoutRes: Int) : Fragment(layoutRes) {
   protected val mActivity by lazy { context as AppCompatActivity }
-  protected abstract fun onInitView(inflater: LayoutInflater, container: ViewGroup?): View?
+  protected open fun onInitView() {}
   protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
@@ -45,16 +43,9 @@ abstract class BaseFragment : Fragment() {
     addOnBackPressed()
   }
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View? {
-    return onInitView(inflater, container)
-  }
-
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
+    onInitView()
     onInitData()
     onOutput()
     onInput()
