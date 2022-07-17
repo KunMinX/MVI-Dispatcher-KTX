@@ -15,7 +15,7 @@ class NoteRequester : MviDispatcherKTX<NoteEvent>() {
    *  与此同时，作为唯一可信源成熟态，
    *  自动消除 “mutable 样板代码 + mutableSharedFlow.emit 误用滥用” 高频痛点。
    */
-  override suspend fun onInput(event: NoteEvent) {
+  override suspend fun onHandle(event: NoteEvent) {
     when (event) {
       is NoteEvent.MarkItem -> sendResult(event.copy(DataRepository.updateNote(event.note!!)))
       is NoteEvent.UpdateItem -> sendResult(event.copy(DataRepository.updateNote(event.note!!)))

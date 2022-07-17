@@ -16,7 +16,7 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
    *  与此同时，作为唯一可信源成熟态，
    *  自动消除 “mutable 样板代码 + mutableSharedFlow.emit 误用滥用” 高频痛点。
    */
-  override suspend fun onInput(event: ComplexEvent) {
+  override suspend fun onHandle(event: ComplexEvent) {
     when (event) {
       //TODO tip 3: 定长队列，随取随用，绝不丢失事件
       // 此处通过 Flow 轮询模拟事件连发，可于 Logcat Debug 见输出

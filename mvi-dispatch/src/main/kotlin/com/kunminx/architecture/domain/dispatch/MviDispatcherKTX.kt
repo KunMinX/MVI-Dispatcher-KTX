@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
  */
 open class MviDispatcherKTX<E> : ViewModel() {
   private var _sharedFlow: MutableSharedFlow<E>? = null
+  private val delayMap: MutableMap<Int, Boolean> = mutableMapOf()
 
   private fun initQueue() {
     if (_sharedFlow == null) _sharedFlow = MutableSharedFlow(
@@ -28,8 +29,10 @@ open class MviDispatcherKTX<E> : ViewModel() {
 
   fun output(activity: AppCompatActivity?, observer: (E) -> Unit) {
     initQueue()
+    delayMap[System.identityHashCode(activity)] = true
     activity?.lifecycleScope?.launch {
       activity.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        delayMap.remove(System.identityHashCode(activity))
         _sharedFlow?.collect { observer.invoke(it) }
       }
     }
@@ -37,8 +40,10 @@ open class MviDispatcherKTX<E> : ViewModel() {
 
   fun output(fragment: Fragment?, observer: (E) -> Unit) {
     initQueue()
+    delayMap[System.identityHashCode(fragment)] = true
     fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
       fragment.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        delayMap.remove(System.identityHashCode(fragment))
         _sharedFlow?.collect { observer.invoke(it) }
       }
     }
@@ -48,14 +53,17 @@ open class MviDispatcherKTX<E> : ViewModel() {
     _sharedFlow?.emit(event)
   }
 
-  fun input(event: E, delayForLifecycleState: Boolean = true) {
+  fun input(event: E) {
     viewModelScope.launch {
-      if (delayForLifecycleState) delayForLifecycleState().collect { onInput(event) }
-      else onInput(event)
+      if (needDelayForLifecycleState) delayForLifecycleState().collect { onHandle(event) }
+      else onHandle(event)
     }
   }
 
-  protected open suspend fun onInput(event: E) {}
+  private val needDelayForLifecycleState
+    get() = delayMap.isNotEmpty()
+
+  protected open suspend fun onHandle(event: E) {}
 
   private fun delayForLifecycleState() = flow {
     delay(1)

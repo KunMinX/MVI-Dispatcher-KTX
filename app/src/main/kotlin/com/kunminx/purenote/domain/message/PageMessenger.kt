@@ -14,7 +14,7 @@ class PageMessenger : MviDispatcherKTX<Messages>() {
    *  与此同时，作为唯一可信源成熟态，
    *  自动消除 “mutable 样板代码 + mutableSharedFlow.emit 误用滥用” 高频痛点。
    */
-  override suspend fun onInput(event: Messages) {
+  override suspend fun onHandle(event: Messages) {
     sendResult(event)
 
     // TODO：tip 2：除接收 Activity/Fragment 事件，亦可从 Dispatcher 内部发送事件（作为副作用）：
