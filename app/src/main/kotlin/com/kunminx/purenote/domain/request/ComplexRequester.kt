@@ -1,12 +1,9 @@
 package com.kunminx.purenote.domain.request
 
-import android.annotation.SuppressLint
-import androidx.lifecycle.viewModelScope
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.domain.event.ComplexEvent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 
 /**
  * Create by KunMinX at 2022/7/5
@@ -19,21 +16,15 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
    *  与此同时，作为唯一可信源成熟态，
    *  自动消除 “mutable 样板代码 + mutableSharedFlow.emit 误用滥用” 高频痛点。
    */
-  @SuppressLint("CheckResult")
-  override fun input(event: ComplexEvent) {
-    viewModelScope.launch {
-      when (event) {
-        //TODO tip 3: 定长队列，随取随用，绝不丢失事件
-        // 此处通过 Flow 轮询模拟事件连发，可于 Logcat Debug 见输出
+  override suspend fun onInput(event: ComplexEvent) {
+    when (event) {
+      //TODO tip 3: 定长队列，随取随用，绝不丢失事件
+      // 此处通过 Flow 轮询模拟事件连发，可于 Logcat Debug 见输出
 
-        is ComplexEvent.ResultTest1 -> interval().collect {
-          val event1 = ComplexEvent.ResultTest4(it)
-          input(event1)
-        }
-        is ComplexEvent.ResultTest2 -> timer(1000).collect { sendResult(event) }
-        is ComplexEvent.ResultTest3 -> timer(1).collect { sendResult(event) }
-        is ComplexEvent.ResultTest4 -> sendResult(event)
-      }
+      is ComplexEvent.ResultTest1 -> interval().collect { input(ComplexEvent.ResultTest4(it)) }
+      is ComplexEvent.ResultTest2 -> timer(1000).collect { sendResult(event) }
+      is ComplexEvent.ResultTest3 -> sendResult(event)
+      is ComplexEvent.ResultTest4 -> sendResult(event)
     }
   }
 

@@ -2,12 +2,11 @@ package com.kunminx.architecture.domain.dispatch
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.*
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 /**
@@ -49,8 +48,17 @@ open class MviDispatcherKTX<E> : ViewModel() {
     _sharedFlow?.emit(event)
   }
 
-  open fun input(event: E) {
+  fun input(event: E) {
+    viewModelScope.launch {
+      delayForLifecycleState().collect { onInput(event) }
+    }
+  }
 
+  protected open suspend fun onInput(event: E) {}
+
+  private fun delayForLifecycleState() = flow {
+    delay(1)
+    emit(true)
   }
 
   companion object {
