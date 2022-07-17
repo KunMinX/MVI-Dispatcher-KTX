@@ -48,9 +48,10 @@ open class MviDispatcherKTX<E> : ViewModel() {
     _sharedFlow?.emit(event)
   }
 
-  fun input(event: E) {
+  fun input(event: E, delayForLifecycleState: Boolean = true) {
     viewModelScope.launch {
-      delayForLifecycleState().collect { onInput(event) }
+      if (delayForLifecycleState) delayForLifecycleState().collect { onInput(event) }
+      else onInput(event)
     }
   }
 
