@@ -12,7 +12,7 @@
 
 ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48npkl348j214a07gaaq.jpg)
 
-故这期，我们带着 MVI-Dispatcher-KTX 及精心打磨示例项目而来，相信查阅后你会耳目一新。
+故这期，我们肝个 MVI-Dispatcher-KTX 示例项目，相信查阅后你会耳目一新。
 
 &nbsp;
 
@@ -24,13 +24,11 @@
 
 # 项目简介
 
-本人长期专注 “业务架构” 模式，所开源 [UnPeek-LiveData](https://github.com/KunMinX/UnPeek-LiveData) 等组件已经过 QQ 音乐等月活过亿生产环境历练。
+“单向数据流” 是图形化客户端开发领域最佳实践，
 
-在本案例中，我将为你展示，MVI-Dispatcher-KTX 是如何 **以简驭繁** 将原本 "繁杂易出错" 之消息分发流程，通过 **寥寥几行代码** 轻而易举完成。
+MVI-Dispatcher 通过内聚抹除 “单向数据流” 学习成本，团队新手在不熟 mutable、MVI 情况下，仅根据简明易懂 input-output 设计亦可自动实现 “单向数据流” 开发，
 
-&nbsp;
-
-![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48v3pvrtkj21670q4795.jpg)
+MVI-Dispatcher-KTX 接口及特性与 [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 保持一致，仅因地制宜替换内部实现。
 
 &nbsp;
 
@@ -40,27 +38,15 @@ implementation 'com.kunminx.arch:mvi-dispatch-ktx:4.5.0-beta'
 
 &nbsp;
 
-亲爱的 MVI-Dispatcher-KTX，你已是个成熟的 '唯一可信源'，该学会自己去完成以下几点：
-
-> 1.**可彻底消除 mutable 样板代码**，一行不必写
->
-> 2.**可连续发送多事件**，契合 MVI 场景需求
->
-> 3.**高性能定长队列，随取随用，用完即走，不丢失事件**
->
-> 4.**可杜绝团队新手滥用** mutableSharedFlow.emit( ) 于 Activity/Fragment
->
-> 5.开发者只需关注 input、output 二处，**从唯一入口 input 注入 Event，并于唯一出口 output 观察**
->
-> 6.团队新手在不熟 Flow、SharedFlow、mutable、MVI 情况下，仅根据 MVI-Dispatcher 简明易懂 input-output 设计亦可自动实现 “单向数据流” 开发
->
-> 7.可无缝整合至 Jetpack MVVM 等模式项目
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48v3pvrtkj21670q4795.jpg)
 
 &nbsp;
 
 # What‘s More
 
-本项目由 100% Java [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 项目改造而来，通过横向对比 MVI-Dispatcher 项目或查阅 git commit 记录 ，可快速了解 Android Studio 一键转换后，为入乡随俗遵循 Kotlin 特性/风格/思维，我们还需手动完成哪些调整修缮。
+本项目由 100% Java [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 项目改造而来，
+
+如您正在学习 Kotlin，通过横向对比 MVI-Dispatcher 项目，可快速了解 Android Studio 一键转换后，为因地制宜遵循 Kotlin 特性/风格/思维，我们还可手动完成哪些调整修缮。
 
 ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48o423017j210i0u0djm.jpg)
 
