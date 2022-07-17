@@ -12,7 +12,7 @@ android {
         targetSdk appTargetSdk
         versionCode appVersionCode
         versionName appVersionName
-        applicationId "com.kunminx.purenote"
+        applicationId "com.kunminx.purenote_ktx"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
