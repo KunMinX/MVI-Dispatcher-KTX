@@ -21,16 +21,16 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
       //TODO tip 3: 定长队列，随取随用，绝不丢失事件
       // 此处通过 Flow 轮询模拟事件连发，可于 Logcat Debug 见输出
 
-      is ComplexEvent.ResultTest1 -> interval().collect { input(ComplexEvent.ResultTest4(it)) }
+      is ComplexEvent.ResultTest1 -> interval(100).collect { input(ComplexEvent.ResultTest4(it)) }
       is ComplexEvent.ResultTest2 -> timer(1000).collect { sendResult(event) }
       is ComplexEvent.ResultTest3 -> sendResult(event)
       is ComplexEvent.ResultTest4 -> sendResult(event)
     }
   }
 
-  private fun interval() = flow {
+  private fun interval(duration: Long) = flow {
     for (i in 0..Int.MAX_VALUE) {
-      delay(100)
+      delay(duration)
       emit(i)
     }
   }
