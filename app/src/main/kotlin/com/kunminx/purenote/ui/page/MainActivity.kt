@@ -2,10 +2,8 @@ package com.kunminx.purenote.ui.page
 
 import android.util.Log
 import androidx.activity.viewModels
-import com.dylanc.viewbinding.binding
 import com.kunminx.architecture.ui.page.BaseActivity
 import com.kunminx.purenote.R
-import com.kunminx.purenote.databinding.ActivityMainBinding
 import com.kunminx.purenote.domain.event.ComplexEvent
 import com.kunminx.purenote.domain.event.Messages
 import com.kunminx.purenote.domain.message.PageMessenger

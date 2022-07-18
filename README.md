@@ -4,7 +4,7 @@
 
 ### [🌏 English README](https://github.com/KunMinX/MVI-Dispatcher-KTX/blob/main/README_EN.md)
 
-排坑小故事：[《SharedFlow 也丢事件？一起来看 MVI-Dispatcher-KTX 如何解决》](https://juejin.cn/post/7121377247105122317)
+排坑小故事：[《repeatOnLifecycle + SharedFlow 隐藏坑排查与治理》](https://juejin.cn/post/7121377247105122317)
 
 &nbsp;
 
