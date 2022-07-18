@@ -32,6 +32,7 @@ apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
 android {
     compileSdk appTargetSdk
+    namespace "com.kunminx.dispatch"
     defaultConfig {
         minSdk appMinSdk
         targetSdk appTargetSdk

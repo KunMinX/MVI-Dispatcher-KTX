@@ -5,6 +5,7 @@ plugins {
 
 android {
     compileSdk appTargetSdk
+    namespace "com.kunminx.architecture"
     defaultConfig {
         minSdk appMinSdk
         targetSdk appTargetSdk
