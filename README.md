@@ -4,13 +4,13 @@
 
 ### [🌏 English README](https://github.com/KunMinX/MVI-Dispatcher-KTX/blob/main/README_EN.md)
 
-排坑小故事：[《repeatOnLifecycle + SharedFlow 隐藏坑排查与治理》](https://juejin.cn/post/7121377247105122317)
+排坑小故事：[《SharedFlow 也丢事件？一起来看 MVI-Dispatcher-KTX 如何解决》](https://juejin.cn/post/7121377247105122317)
 
 &nbsp;
 
 上期[《Google Android 架构设计拆解及改善建议》](https://juejin.cn/post/7117498113983512589)侧重拆解官方架构 “领域层” 设计误区，并给出改善建议 —— 通过 MVI-Dispatcher 承担 Event-Handler，
 
-然有小伙伴表示，不仅想要 MVI-Dispatcher，还想看看 Kotlin 版 MVI 实践
+然有小伙伴表示，不仅要 MVI-Dispatcher，还想看看 Kotlin 版 MVI 实践
 
 ![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48npkl348j214a07gaaq.jpg)
 
@@ -28,9 +28,9 @@
 
 “单向数据流” 是近年公认 “图形化客户端开发” 领域最佳实践，
 
-MVI-Dispatcher 通过内聚抹除 “单向数据流” 学习成本，使团队新手在不熟 mutable、MVI 情况下，仅根据简明易懂 input-output 设计亦可自动实现 “单向数据流” 开发，
+MVI-Dispatcher 抹除 “单向数据流” 学习成本，使开发者在不熟 mutable、MVI 情况下，仅根据简明易懂 input-output 设计亦可自动实现 “单向数据流” 开发，
 
-MVI-Dispatcher-KTX 接口及特性与 [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 保持一致，可彻底消除 mutable 样板代码；可杜绝 setValue/emit 误用滥用页面中；且可无缝整合至 Jetpack MVVM 等模式项目。
+KTX 版接口与 [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 保持一致，可彻底消除 mutable 样板代码；杜绝 setValue/emit 误用滥用；且可无缝整至 Jetpack MVVM 项目中。
 
 &nbsp;
 
