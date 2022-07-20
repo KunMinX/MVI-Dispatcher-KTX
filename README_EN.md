@@ -1,8 +1,8 @@
-![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48wrrwn0oj21890u00y9.jpg)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h4dvnd27wij21710db0uo.jpg)
 
 &nbsp;
 
-The last article of ["Google Android Official Architecture Example, I'm waiting for you at the starting line"](https://medium.com/@kunminx/google-android-official-architecture-example-i-am-waiting-for-you-at-the-starting-line-b4752d97f283) focused on dismantling the design misunderstandings of the "domain layer" of the official architecture, and gave suggestions for improvement - replacing Event-ViewModel with MVI-Dispatcher,
+The last article of ["Google Android Architecture Design Analysis and Improvement Suggestions"](https://medium.com/@kunminx/google-android-official-architecture-example-i-am-waiting-for-you-at-the-starting-line-b4752d97f283) focused on dismantling the design misunderstandings of the "domain layer" of the official architecture, and gave suggestions for improvement - replacing Event-ViewModel with MVI-Dispatcher,
 
 However, some friends said that they not only want MVI-Dispatcher, but also want to see the MVI practice under Kotlin to hedge the fog of various examples.
 
