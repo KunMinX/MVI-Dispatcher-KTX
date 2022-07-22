@@ -47,6 +47,9 @@ class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
   /**
    * TODO tip 1：
    *  通过唯一出口 'dispatcher.output' 统一接收 '唯一可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
+   *  ~
+   *  Through the only exit 'dispatcher.output()' uniformly receives the message pushed back
+   *  by the Single Source of Truth, and processes the UI logic according to the ID shunting.
    */
   override fun onOutput() {
     noteRequester.output(this) { noteEvent ->
@@ -61,6 +64,9 @@ class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
   /**
    * TODO tip 2：
    *  通过唯一入口 'dispatcher.input' 发消息至 "唯一可信源"，由其内部统一处理业务逻辑和结果分发。
+   *  ~
+   *  Through the unique entry 'dispatcher Input' sends a message to the Single Source of Truth,
+   *  which processes the business logic and distributes the results internally.
    */
   override fun onInput() {
     binding.btnBack.setOnClickListener { save() }
