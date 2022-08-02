@@ -8,7 +8,7 @@
 
 &nbsp;
 
-上期[《Google Android 架构设计拆解及改善建议》](https://juejin.cn/post/7117498113983512589)侧重拆解官方架构 “领域层” 设计误区，并给出改善建议 —— 通过 MVI-Dispatcher 承担 Event-Handler，
+上期[《Jetpack 架构组件设计拆解及改善建议》](https://juejin.cn/post/7117498113983512589)侧重拆解官方架构 “领域层” 设计误区，并给出改善建议 —— 通过 MVI-Dispatcher 承担 Event-Handler，
 
 然有小伙伴表示，不仅要 MVI-Dispatcher，还想看看 Kotlin 版 MVI 实践
 
