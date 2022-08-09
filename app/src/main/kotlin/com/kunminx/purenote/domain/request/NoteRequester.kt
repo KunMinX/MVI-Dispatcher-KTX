@@ -1,8 +1,10 @@
 package com.kunminx.purenote.domain.request
 
+import android.util.Log
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.data.repo.DataRepository
 import com.kunminx.purenote.domain.event.NoteEvent
+import kotlinx.coroutines.flow.firstOrNull
 
 /**
  * Create by KunMinX at 2022/6/14
@@ -29,14 +31,10 @@ class NoteRequester : MviDispatcherKTX<NoteEvent>() {
       is NoteEvent.UpdateItem -> sendResult(event.copy(DataRepository.updateNote(event.note!!)))
       is NoteEvent.AddItem -> sendResult(event.copy(DataRepository.insertNote(event.note!!)))
       is NoteEvent.RemoveItem -> sendResult(event.copy(DataRepository.deleteNote(event.note!!)))
-      is NoteEvent.GetNoteList -> {
-        DataRepository.getNotes().collect { sendResult(event.copy(it)) }
-      }
+      is NoteEvent.GetNoteList -> sendResult(event.copy(DataRepository.getNotes().firstOrNull()))
       is NoteEvent.ToppingItem -> {
         val success = DataRepository.updateNote(event.note!!)
-        if (success) DataRepository.getNotes().collect {
-          sendResult(NoteEvent.GetNoteList(it))
-        }
+        if (success) sendResult(NoteEvent.GetNoteList(DataRepository.getNotes().firstOrNull()))
       }
     }
   }
