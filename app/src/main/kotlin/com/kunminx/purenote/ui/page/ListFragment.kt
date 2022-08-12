@@ -3,9 +3,9 @@ package com.kunminx.purenote.ui.page
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import com.dylanc.viewbinding.binding
 import com.kunminx.architecture.ui.page.BaseFragment
+import com.kunminx.architecture.ui.page.StateHolder
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
 import com.kunminx.purenote.databinding.FragmentListBinding
@@ -82,7 +82,7 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
     return super.onBackPressed()
   }
 
-  class ListViewModel : ViewModel() {
+  class ListViewModel : StateHolder() {
     var list: MutableList<Note> = mutableListOf()
   }
 }

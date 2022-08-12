@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.dylanc.viewbinding.binding
 import com.kunminx.architecture.ui.page.BaseFragment
+import com.kunminx.architecture.ui.page.StateHolder
 import com.kunminx.architecture.utils.ToastUtils
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
@@ -99,7 +99,7 @@ class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
     return save()
   }
 
-  class EditorViewModel : ViewModel() {
+  class EditorViewModel : StateHolder() {
     var originNote: Note? = Note()
     var tempNote: Note? = Note()
     var title: String = ""
