@@ -42,8 +42,7 @@ open class MviDispatcherKTX<E> : ViewModel() {
     activity?.lifecycleScope?.launch {
       activity.repeatOnLifecycle(Lifecycle.State.STARTED) {
         delayMap.remove(System.identityHashCode(activity))
-        _sharedFlow?.flowOnLifecycleConsumeOnce(activity.lifecycle)
-          ?.collect { observer.invoke(it) }
+        _sharedFlow?.flowOnLifecycleConsumeOnce()?.collect { observer.invoke(it) }
       }
     }
   }
@@ -54,8 +53,7 @@ open class MviDispatcherKTX<E> : ViewModel() {
     fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
       fragment.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
         delayMap.remove(System.identityHashCode(fragment))
-        _sharedFlow?.flowOnLifecycleConsumeOnce(fragment.viewLifecycleOwner.lifecycle)
-          ?.collect { observer.invoke(it) }
+        _sharedFlow?.flowOnLifecycleConsumeOnce()?.collect { observer.invoke(it) }
       }
     }
   }
@@ -81,15 +79,11 @@ open class MviDispatcherKTX<E> : ViewModel() {
     emit(true)
   }
 
-  private fun <E> Flow<E>.flowOnLifecycleConsumeOnce(
-    lifecycle: Lifecycle,
-  ): Flow<E> = callbackFlow {
-    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-      this@flowOnLifecycleConsumeOnce.collect {
-        val newHashCode = System.identityHashCode(it)
-        if (lastValue.hashCode != newHashCode) send(it)
-        lastValue.hashCode = newHashCode
-      }
+  private fun <E> Flow<E>.flowOnLifecycleConsumeOnce(): Flow<E> = callbackFlow {
+    this@flowOnLifecycleConsumeOnce.collect {
+      val newHashCode = System.identityHashCode(it)
+      if (lastValue.hashCode != newHashCode) send(it)
+      lastValue.hashCode = newHashCode
     }
     lastValue.hashCode = 0
     close()
