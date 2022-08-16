@@ -20,7 +20,7 @@ import com.kunminx.purenote.ui.adapter.NoteAdapter
  */
 class ListFragment : BaseFragment((R.layout.fragment_list)) {
   private val binding: FragmentListBinding by binding()
-  private val states by viewModels<ListViewModel>()
+  private val states by viewModels<ListStates>()
   private val noteRequester by viewModels<NoteRequester>()
   private val messenger by activityViewModels<PageMessenger>()
   private val adapter by lazy { NoteAdapter() }
@@ -46,8 +46,7 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
       when (noteEvent) {
         is NoteEvent.GetNoteList -> {
           states.list = noteEvent.notes!!.toMutableList()
-          adapter.setData(states.list)
-          binding.ivEmpty.visibility = if (states.list.isEmpty()) View.VISIBLE else View.GONE
+          updateList()
         }
         is NoteEvent.ToppingItem -> {}
         is NoteEvent.MarkItem -> {}
@@ -74,7 +73,13 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
       }
     }
     binding.fab.setOnClickListener { EditorFragment.start(nav(), Note()) }
-    noteRequester.input(NoteEvent.GetNoteList())
+    if (states.list.isEmpty()) noteRequester.input(NoteEvent.GetNoteList())
+    else updateList()
+  }
+
+  private fun updateList() {
+    adapter.setData(states.list)
+    binding.ivEmpty.visibility = if (states.list.isEmpty()) View.VISIBLE else View.GONE
   }
 
   override fun onBackPressed(): Boolean {
@@ -82,7 +87,7 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
     return super.onBackPressed()
   }
 
-  class ListViewModel : StateHolder() {
+  class ListStates : StateHolder() {
     var list: MutableList<Note> = mutableListOf()
   }
 }

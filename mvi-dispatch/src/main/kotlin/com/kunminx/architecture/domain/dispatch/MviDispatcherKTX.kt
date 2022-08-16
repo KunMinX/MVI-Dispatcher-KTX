@@ -2,10 +2,17 @@ package com.kunminx.architecture.domain.dispatch
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewModelScope
+import kotlin.collections.set
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
@@ -15,11 +22,13 @@ import kotlinx.coroutines.launch
 open class MviDispatcherKTX<E> : ViewModel() {
   private var _sharedFlow: MutableSharedFlow<E>? = null
   private val delayMap: MutableMap<Int, Boolean> = mutableMapOf()
+  private var lastValue = LastValue(0)
 
   private fun initQueue() {
     if (_sharedFlow == null) _sharedFlow = MutableSharedFlow(
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
-      extraBufferCapacity = initQueueMaxLength()
+      extraBufferCapacity = initQueueMaxLength(),
+      replay = 1
     )
   }
 
@@ -33,7 +42,8 @@ open class MviDispatcherKTX<E> : ViewModel() {
     activity?.lifecycleScope?.launch {
       activity.repeatOnLifecycle(Lifecycle.State.STARTED) {
         delayMap.remove(System.identityHashCode(activity))
-        _sharedFlow?.collect { observer.invoke(it) }
+        _sharedFlow?.flowOnLifecycleConsumeOnce(activity.lifecycle)
+          ?.collect { observer.invoke(it) }
       }
     }
   }
@@ -44,7 +54,8 @@ open class MviDispatcherKTX<E> : ViewModel() {
     fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
       fragment.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
         delayMap.remove(System.identityHashCode(fragment))
-        _sharedFlow?.collect { observer.invoke(it) }
+        _sharedFlow?.flowOnLifecycleConsumeOnce(fragment.viewLifecycleOwner.lifecycle)
+          ?.collect { observer.invoke(it) }
       }
     }
   }
@@ -69,6 +80,22 @@ open class MviDispatcherKTX<E> : ViewModel() {
     delay(1)
     emit(true)
   }
+
+  private fun <E> Flow<E>.flowOnLifecycleConsumeOnce(
+    lifecycle: Lifecycle,
+  ): Flow<E> = callbackFlow {
+    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+      this@flowOnLifecycleConsumeOnce.collect {
+        val newHashCode = System.identityHashCode(it)
+        if (lastValue.hashCode != newHashCode) send(it)
+        lastValue.hashCode = newHashCode
+      }
+    }
+    lastValue.hashCode = 0
+    close()
+  }
+
+  data class LastValue(var hashCode: Int)
 
   companion object {
     private const val DEFAULT_QUEUE_LENGTH = 10

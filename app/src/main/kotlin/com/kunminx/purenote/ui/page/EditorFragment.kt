@@ -23,7 +23,7 @@ import java.util.*
  */
 class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
   private val binding: FragmentEditorBinding by binding()
-  private val states by viewModels<EditorViewModel>()
+  private val states by viewModels<EditorStates>()
   private val noteRequester by viewModels<NoteRequester>()
   private val messenger by activityViewModels<PageMessenger>()
 
@@ -99,7 +99,7 @@ class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
     return save()
   }
 
-  class EditorViewModel : StateHolder() {
+  class EditorStates : StateHolder() {
     var originNote: Note? = Note()
     var tempNote: Note? = Note()
     var title: String = ""

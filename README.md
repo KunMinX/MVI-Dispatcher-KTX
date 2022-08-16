@@ -35,7 +35,7 @@ KTX 版接口与 [MVI-Dispatcher](https://github.com/KunMinX/MVI-Dispatcher) 保
 &nbsp;
 
 ```Groovy
-implementation 'com.kunminx.arch:mvi-dispatch-ktx:6.0.0-beta'
+implementation 'com.kunminx.arch:mvi-dispatch-ktx:6.3.0-beta'
 ```
 
 &nbsp;
