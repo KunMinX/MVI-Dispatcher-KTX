@@ -28,7 +28,7 @@ open class MviDispatcherKTX<E> : ViewModel() {
     if (_sharedFlow == null) _sharedFlow = MutableSharedFlow(
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
       extraBufferCapacity = initQueueMaxLength(),
-      replay = 1
+      replay = initQueueMaxLength()
     )
   }
 
