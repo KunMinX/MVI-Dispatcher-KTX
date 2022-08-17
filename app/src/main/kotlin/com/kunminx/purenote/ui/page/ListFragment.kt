@@ -1,6 +1,8 @@
 package com.kunminx.purenote.ui.page
 
+import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.dylanc.viewbinding.binding
@@ -9,9 +11,11 @@ import com.kunminx.architecture.ui.page.StateHolder
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
 import com.kunminx.purenote.databinding.FragmentListBinding
+import com.kunminx.purenote.domain.event.ComplexEvent
 import com.kunminx.purenote.domain.event.Messages
 import com.kunminx.purenote.domain.event.NoteEvent
 import com.kunminx.purenote.domain.message.PageMessenger
+import com.kunminx.purenote.domain.request.ComplexRequester
 import com.kunminx.purenote.domain.request.NoteRequester
 import com.kunminx.purenote.ui.adapter.NoteAdapter
 
@@ -23,6 +27,7 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
   private val states by viewModels<ListStates>()
   private val noteRequester by viewModels<NoteRequester>()
   private val messenger by activityViewModels<PageMessenger>()
+  private val complexRequester by activityViewModels<ComplexRequester>()
   private val adapter by lazy { NoteAdapter() }
 
   override fun onInitView() {
@@ -52,6 +57,15 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
         is NoteEvent.MarkItem -> {}
         is NoteEvent.RemoveItem -> {}
         else -> {}
+      }
+    }
+
+    complexRequester.output(this) { complexEvent ->
+      when (complexEvent) {
+        is ComplexEvent.ResultTest1 -> Log.d("f complexEvent", "---1")
+        is ComplexEvent.ResultTest2 -> Log.d("f complexEvent", "---2")
+        is ComplexEvent.ResultTest3 -> Log.d("f complexEvent", "---3")
+        is ComplexEvent.ResultTest4 -> Log.d("f complexEvent", "---4 " + complexEvent.count)
       }
     }
   }

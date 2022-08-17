@@ -2,25 +2,25 @@ package com.kunminx.architecture.domain.dispatch
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 /**
  * Create by KunMinX at 2022/7/3
  */
-open class MviDispatcherKTX<E> : ViewModel() {
-  private var lastValue = LastValue(0)
-  private val _sharedFlow: MutableSharedFlow<E>? by lazy {
+open class MviDispatcherKTX<E> : ViewModel(), DefaultLifecycleObserver {
+  private var version = START_VERSION
+  private var currentVersion = START_VERSION
+  private var observerCount = 0
+  private val _sharedFlow: MutableSharedFlow<ConsumeOnceValue<E>>? by lazy {
     MutableSharedFlow(
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
       extraBufferCapacity = initQueueMaxLength(),
@@ -33,23 +33,47 @@ open class MviDispatcherKTX<E> : ViewModel() {
   }
 
   fun output(activity: AppCompatActivity?, observer: (E) -> Unit) {
+    currentVersion = version
+    observerCount++
+    activity?.lifecycle?.addObserver(this)
     activity?.lifecycleScope?.launch {
       activity.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        _sharedFlow?.flowConsumeOnce()?.collect { observer.invoke(it) }
+        _sharedFlow?.collect {
+          if (version > currentVersion) {
+            if (it.consumeCount >= observerCount) return@collect
+            it.consumeCount++
+            observer.invoke(it.value)
+          }
+        }
       }
     }
   }
 
   fun output(fragment: Fragment?, observer: (E) -> Unit) {
+    currentVersion = version
+    observerCount++
+    fragment?.viewLifecycleOwner?.lifecycle?.addObserver(this)
     fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
       fragment.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        _sharedFlow?.flowConsumeOnce()?.collect { observer.invoke(it) }
+        _sharedFlow?.collect {
+          if (version > currentVersion) {
+            if (it.consumeCount >= observerCount) return@collect
+            it.consumeCount++
+            observer.invoke(it.value)
+          }
+        }
       }
     }
   }
 
+  override fun onDestroy(owner: LifecycleOwner) {
+    super.onDestroy(owner)
+    observerCount--
+  }
+
   protected suspend fun sendResult(event: E) {
-    _sharedFlow?.emit(event)
+    version++
+    _sharedFlow?.emit(ConsumeOnceValue(value = event))
   }
 
   fun input(event: E) {
@@ -58,24 +82,13 @@ open class MviDispatcherKTX<E> : ViewModel() {
 
   protected open suspend fun onHandle(event: E) {}
 
-  private fun delayForLifecycleState() = flow {
-    delay(1)
-    emit(true)
-  }
-
-  private fun <E> Flow<E>.flowConsumeOnce(): Flow<E> = callbackFlow {
-    this@flowConsumeOnce.collect {
-      val newHashCode = System.identityHashCode(it)
-      if (lastValue.hashCode != newHashCode) send(it)
-      lastValue.hashCode = newHashCode
-    }
-    lastValue.hashCode = 0
-    close()
-  }
-
-  data class LastValue(var hashCode: Int)
+  data class ConsumeOnceValue<E>(
+    var consumeCount: Int = 0,
+    val value: E
+  )
 
   companion object {
     private const val DEFAULT_QUEUE_LENGTH = 10
+    private const val START_VERSION = -1
   }
 }
