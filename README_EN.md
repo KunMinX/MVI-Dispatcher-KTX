@@ -35,7 +35,7 @@ In this case, I will show you how MVI-Dispatcher can simplify the otherwise “c
 &nbsp;
 
 ```Groovy
-implementation 'com.kunminx.arch:mvi-dispatch-ktx:6.4.0-beta'
+implementation 'com.kunminx.arch:mvi-dispatch-ktx:6.5.0-beta'
 ```
 
 &nbsp;
