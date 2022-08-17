@@ -3,12 +3,16 @@ package com.kunminx.purenote.domain.request
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.domain.event.ComplexEvent
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 /**
  * Create by KunMinX at 2022/7/5
  */
 class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
+
+  private var _interval: Flow<Int>? = null
+
   /**
    * TODO tip 1：
    *  作为 '唯一可信源'，接收发自页面消息，内部统一处理业务逻辑，并通过 sendResult 结果分发。
@@ -32,7 +36,12 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
       // Fixed length queue, on demand, never lose events
       // Here, Flow polling simulation events are sent repeatedly, and the output can be seen in logcat debug
 
-      is ComplexEvent.ResultTest1 -> interval(100).collect { input(ComplexEvent.ResultTest4(it)) }
+      is ComplexEvent.ResultTest1 -> {
+        if (_interval == null) {
+          _interval = interval(1000)
+          _interval?.collect { input(ComplexEvent.ResultTest4(it)) }
+        }
+      }
       is ComplexEvent.ResultTest2 -> timer(1000).collect { sendResult(event) }
       is ComplexEvent.ResultTest3 -> sendResult(event)
       is ComplexEvent.ResultTest4 -> sendResult(event)
