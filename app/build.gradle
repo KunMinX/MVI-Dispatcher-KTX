@@ -9,7 +9,7 @@ android {
     compileSdk appTargetSdk
     namespace "com.kunminx.purenote"
     defaultConfig {
-        minSdk appMinSdk
+        minSdk 23
         targetSdk appTargetSdk
         versionCode appVersionCode
         versionName appVersionName

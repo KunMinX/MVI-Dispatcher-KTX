@@ -54,12 +54,12 @@ class MainActivity : BaseActivity() {
     // Here you can see through dispatcher Input sends multiple events continuously without being overwritten
 
     complexRequester.input(ComplexEvent.ResultTest1())
-//    complexRequester.input(ComplexEvent.ResultTest2())
-//    complexRequester.input(ComplexEvent.ResultTest2())
-//    complexRequester.input(ComplexEvent.ResultTest2())
-//    complexRequester.input(ComplexEvent.ResultTest2())
-//    complexRequester.input(ComplexEvent.ResultTest3())
-//    complexRequester.input(ComplexEvent.ResultTest3())
-//    complexRequester.input(ComplexEvent.ResultTest3())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest2())
+    complexRequester.input(ComplexEvent.ResultTest3())
+    complexRequester.input(ComplexEvent.ResultTest3())
+    complexRequester.input(ComplexEvent.ResultTest3())
   }
 }
