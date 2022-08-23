@@ -4,7 +4,11 @@
 
 ### [🌏 English README](https://github.com/KunMinX/MVI-Dispatcher-KTX/blob/main/README_EN.md)
 
-排坑小故事：[《repeatOnLifecycle + SharedFlow 隐藏坑排查与治理》](https://juejin.cn/post/7121377247105122317)
+研发故事：
+
+[《repeatOnLifecycle + SharedFlow 隐藏坑排查与治理》](https://juejin.cn/post/7121377247105122317)
+
+[《Android：解决 MVI 架构实战痛点》](https://juejin.cn/post/7134594010642907149)
 
 &nbsp;
 
