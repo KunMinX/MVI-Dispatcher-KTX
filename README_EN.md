@@ -2,7 +2,11 @@
 
 &nbsp;
 
-Troubleshoot pitfalls story:[《RepeatOnLifecycle + SharedFlow hidden pitfall troubleshooting and handling》](https://blog.devgenius.io/repeatonlifecycle-sharedflow-hidden-pitfall-troubleshooting-and-handling-d22e7c16ab84)
+Developer story:
+
+[《RepeatOnLifecycle + SharedFlow hidden pitfall troubleshooting and handling》](https://blog.devgenius.io/repeatonlifecycle-sharedflow-hidden-pitfall-troubleshooting-and-handling-d22e7c16ab84)
+
+[《Android: Solving the Pain Points of MVI Architecture in Practice》](https://blog.devgenius.io/android-solving-the-pain-points-of-mvi-architecture-in-practice-4971fa9ed9c0)
 
 &nbsp;
 
