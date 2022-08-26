@@ -2,17 +2,18 @@
 
 &nbsp;
 
-Troubleshoot pitfalls story:[《RepeatOnLifecycle + SharedFlow hidden pitfall troubleshooting and handling》](https://blog.devgenius.io/repeatonlifecycle-sharedflow-hidden-pitfall-troubleshooting-and-handling-d22e7c16ab84)
+development story:[《Android: Solving the Pain Points of MVI Architecture in Practice
+》](https://blog.devgenius.io/android-solving-the-pain-points-of-mvi-architecture-in-practice-4971fa9ed9c0)
 
 &nbsp;
 
-The last article of ["Jetpack Architecture Component Design Analysis and Improvement Suggestions"](https://medium.com/@kunminx/google-android-official-architecture-example-i-am-waiting-for-you-at-the-starting-line-b4752d97f283) focused on dismantling the design misunderstandings of the "domain layer" of the official architecture, and gave suggestions for improvement - replacing Event-ViewModel with MVI-Dispatcher,
+The last article of ["Google Android Architecture Design Analysis and Improvement Suggestions"](https://medium.com/@kunminx/google-android-official-architecture-example-i-am-waiting-for-you-at-the-starting-line-b4752d97f283) focused on dismantling the design misunderstandings of the "domain layer", and gave suggestions for improvement - replacing Event-ViewModel with MVI-Dispatcher,
 
 However, some friends said that they not only want MVI-Dispatcher, but also want to see the MVI practice under Kotlin to hedge the fog of various examples.
 
-![](https://tva1.sinaimg.cn/large/e6c9d24ely1h48npkl348j214a07gaaq.jpg)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h4ej1dzqagj21uo0inju8.jpg)
 
-Therefore, in this issue, we come with MVI-Dispatcher-KTX and carefully polished example projects, I believe you will be refreshed after reading.
+Therefore, this time, we come with MVI-Dispatcher-KTX and carefully polished example projects, I believe you will be refreshed after reading.
 
 &nbsp;
 
@@ -35,7 +36,7 @@ In this case, I will show you how MVI-Dispatcher can simplify the otherwise “c
 &nbsp;
 
 ```Groovy
-implementation 'com.kunminx.arch:mvi-dispatch-ktx:7.0.1-beta'
+implementation 'com.kunminx.arch:mvi-dispatch-ktx:6.0.0-beta'
 ```
 
 &nbsp;
@@ -121,4 +122,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-

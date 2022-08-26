@@ -4,11 +4,11 @@
 
 ### [🌏 English README](https://github.com/KunMinX/MVI-Dispatcher-KTX/blob/main/README_EN.md)
 
-排坑小故事：[《repeatOnLifecycle + SharedFlow 隐藏坑排查与治理》](https://juejin.cn/post/7121377247105122317)
+研发故事：[《解决 MVI 架构实战痛点》](https://juejin.cn/post/7134594010642907149)
 
 &nbsp;
 
-上期[《Jetpack 架构组件设计拆解及改善建议》](https://juejin.cn/post/7117498113983512589)侧重拆解官方架构 “领域层” 设计误区，并给出改善建议 —— 通过 MVI-Dispatcher 承担 Event-Handler，
+上期[《Jetpack 架构组件设计拆解及改善建议》](https://juejin.cn/post/7117498113983512589)侧重拆解 “领域层” 设计误区，并给出改善建议 —— 通过 MVI-Dispatcher 承担 Event-Handler，
 
 然有小伙伴表示，不仅要 MVI-Dispatcher，还想看看 Kotlin 版 MVI 实践
 
@@ -26,7 +26,7 @@
 
 # 项目简介
 
-“单向数据流” 是近年公认 “图形化客户端开发” 领域最佳实践，
+“单向数据流” 是近年公认 “图形化客户端开发” 领域推荐方式，
 
 MVI-Dispatcher 抹除 “单向数据流” 学习成本，使开发者在不熟 mutable、MVI 情况下，仅根据简明易懂 input-output 设计亦可自动实现 “单向数据流” 开发，
 
@@ -90,7 +90,7 @@ implementation 'com.kunminx.arch:mvi-dispatch-ktx:7.0.1-beta'
 
 本项目场景案例及 MVI-Dispatcher-KTX 框架，均属本人独立原创设计，本人对此享有最终解释权。
 
-任何个人或组织，未经与作者本人当面沟通，不得将本项目代码设计及本人对 “唯一可信源” 及 MVI 独家理解用于 "**打包贩卖、出书、卖课**" 等商业用途。
+任何个人或组织，未经与作者本人当面沟通许可，不得将本项目代码设计及本人对 “唯一可信源” 及 MVI 独家理解用于 "**打包贩卖、出书、卖课**" 等商业用途。
 
 如需引用借鉴 “本项目框架设计背景及思路” 写作发行，请注明**链接出处**。
 
@@ -113,4 +113,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
