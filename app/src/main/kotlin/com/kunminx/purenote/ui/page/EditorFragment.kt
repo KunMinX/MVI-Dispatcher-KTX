@@ -5,13 +5,16 @@ import android.text.TextUtils
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
-import com.dylanc.viewbinding.binding
+import com.kunminx.architecture.ui.bind.ClickProxy
 import com.kunminx.architecture.ui.page.BaseFragment
+import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.kunminx.architecture.ui.page.StateHolder
+import com.kunminx.architecture.ui.state.State
 import com.kunminx.architecture.utils.ToastUtils
+import com.kunminx.architecture.utils.Utils
+import com.kunminx.purenote.BR
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
-import com.kunminx.purenote.databinding.FragmentEditorBinding
 import com.kunminx.purenote.domain.event.Messages
 import com.kunminx.purenote.domain.event.NoteEvent
 import com.kunminx.purenote.domain.message.PageMessenger
@@ -21,25 +24,28 @@ import java.util.*
 /**
  * Create by KunMinX at 2022/6/30
  */
-class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
-  private val binding: FragmentEditorBinding by binding()
+class EditorFragment : BaseFragment() {
   private val states by viewModels<EditorStates>()
   private val noteRequester by viewModels<NoteRequester>()
   private val messenger by activityViewModels<PageMessenger>()
+  private val clickProxy by lazy { ClickProxy() }
+
+  override fun getDataBindingConfig(): DataBindingConfig {
+    return DataBindingConfig(R.layout.fragment_editor, BR.state, states)
+      .addBindingParam(BR.click, clickProxy)
+  }
 
   override fun onInitData() {
     if (arguments != null) {
-      states.originNote = requireArguments().getParcelable(NOTE)!!
-      states.title = states.originNote!!.title
-      states.content = states.originNote!!.content
-      if (TextUtils.isEmpty(states.originNote!!.id)) {
-        binding.etTitle.requestFocus()
-        binding.etTitle.post { toggleSoftInput() }
+      states.tempNote.set(requireArguments().getParcelable(NOTE)!!)
+      states.title.set(states.tempNote.get()?.title!!)
+      states.content.set(states.tempNote.get()?.content!!)
+      if (TextUtils.isEmpty(states.tempNote.get()?.id)) {
+        states.titleRequestFocus.set(true)
+        showKeyboard()
       } else {
-        binding.etTitle.setText(states.originNote!!.title)
-        binding.etContent.setText(states.originNote!!.content)
-        binding.tvTitle.text = getString(R.string.last_time_modify)
-        binding.tvTime.text = states.originNote!!.modifyDate
+        states.tip.set(getString(R.string.last_time_modify))
+        states.time.set(states.tempNote.get()?.modifyDate!!)
       }
     }
   }
@@ -69,29 +75,24 @@ class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
    *  which processes the business logic and distributes the results internally.
    */
   override fun onInput() {
-    binding.btnBack.setOnClickListener { save() }
+    clickProxy.setOnClickListener { v -> if (v.id == R.id.btn_back) save() }
   }
 
   private fun save(): Boolean {
-    val title = binding.etTitle.text.toString()
-    val content = binding.etContent.text.toString()
-    if (title.isEmpty() && content.isEmpty() || title == states.title && content == states.content) {
-      return nav().navigateUp()
-    }
+    val tempNote = states.tempNote.get()
+    val title = states.title.get()
+    val content = states.content.get()
+    val empty = TextUtils.isEmpty(title + content)
+    val unChanged = tempNote?.title == title && tempNote?.content == content
+    if (empty || unChanged) return nav().navigateUp()
+
     val time = System.currentTimeMillis()
-    if (states.originNote!!.id.isEmpty()) {
-      states.tempNote = Note(UUID.randomUUID().toString(), title, content, time, time, 0)
+    val note: Note = if (tempNote?.id?.isEmpty()!!) {
+      Note(UUID.randomUUID().toString(), title!!, content!!, time, time, 0)
     } else {
-      states.tempNote = Note(
-        states.originNote!!.id,
-        title,
-        content,
-        states.originNote!!.createTime,
-        time,
-        states.originNote!!.type
-      )
+      Note(tempNote.id, title!!, content!!, tempNote.createTime, time, tempNote.type)
     }
-    noteRequester.input(NoteEvent.AddItem().setNote(states.tempNote!!))
+    noteRequester.input(NoteEvent.AddItem().setNote(note))
     return true
   }
 
@@ -100,10 +101,12 @@ class EditorFragment : BaseFragment((R.layout.fragment_editor)) {
   }
 
   class EditorStates : StateHolder() {
-    var originNote: Note? = Note()
-    var tempNote: Note? = Note()
-    var title: String = ""
-    var content: String = ""
+    val tempNote = State<Note>(Note())
+    val title = State("")
+    val content = State("")
+    val tip: State<String> = State(Utils.app?.getString(R.string.edit)!!)
+    val time: State<String> = State(Utils.app?.getString(R.string.new_note)!!)
+    val titleRequestFocus = State(false)
   }
 
   companion object {

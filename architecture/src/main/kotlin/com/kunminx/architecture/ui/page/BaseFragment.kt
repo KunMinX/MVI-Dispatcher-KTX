@@ -24,19 +24,20 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 
 /**
  * Create by KunMinX at 19/7/11
  */
-abstract class BaseFragment(layoutRes: Int) : Fragment(layoutRes) {
+abstract class BaseFragment : DataBindingFragment() {
   protected val mActivity by lazy { context as AppCompatActivity }
-  protected open fun onInitView() {}
   protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
+
+  override fun initViewModel() {
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -45,7 +46,6 @@ abstract class BaseFragment(layoutRes: Int) : Fragment(layoutRes) {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    onInitView()
     onInitData()
     onOutput()
     onInput()
@@ -58,6 +58,10 @@ abstract class BaseFragment(layoutRes: Int) : Fragment(layoutRes) {
   protected fun toggleSoftInput() {
     val imm = mActivity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
+  }
+
+  protected open fun showKeyboard() {
+    if (mActivity != null) mActivity.window.decorView.post { toggleSoftInput() }
   }
 
   protected fun openUrlInBrowser(url: String?) {

@@ -1,0 +1,25 @@
+package com.kunminx.purenote.domain.event
+
+import com.kunminx.purenote.data.bean.Weather
+
+/**
+ * Create by KunMinX at 2022/8/24
+ */
+sealed class ApiEvent {
+  var cityCode: String? = null
+  fun setCityCode(cityCode: String = CITY_CODE_BEIJING): ApiEvent {
+    this.cityCode = cityCode
+    return this
+  }
+
+  data class GetWeatherInfo(var live: Weather.Live? = null) : ApiEvent()
+  data class Error(var errorInfo: String? = null) : ApiEvent()
+
+  companion object {
+    const val API_KEY = "32d8017dd7b9c2954aa55496a62033c5"
+    const val BASE_URL = "https://restapi.amap.com/v3/"
+    const val GET_WEATHER_INFO = "weatherInfo"
+    const val ERROR = "error"
+    const val CITY_CODE_BEIJING = "110000"
+  }
+}

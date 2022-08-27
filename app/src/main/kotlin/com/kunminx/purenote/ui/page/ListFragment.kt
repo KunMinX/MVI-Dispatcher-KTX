@@ -1,37 +1,39 @@
 package com.kunminx.purenote.ui.page
 
-import android.util.Log
-import android.view.View
-import androidx.activity.viewModels
+import android.text.TextUtils
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.dylanc.viewbinding.binding
+import com.kunminx.architecture.ui.bind.ClickProxy
 import com.kunminx.architecture.ui.page.BaseFragment
+import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.kunminx.architecture.ui.page.StateHolder
+import com.kunminx.architecture.ui.state.State
+import com.kunminx.purenote.BR
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
-import com.kunminx.purenote.databinding.FragmentListBinding
-import com.kunminx.purenote.domain.event.ComplexEvent
+import com.kunminx.purenote.domain.event.ApiEvent
 import com.kunminx.purenote.domain.event.Messages
 import com.kunminx.purenote.domain.event.NoteEvent
 import com.kunminx.purenote.domain.message.PageMessenger
-import com.kunminx.purenote.domain.request.ComplexRequester
+import com.kunminx.purenote.domain.request.HttpRequester
 import com.kunminx.purenote.domain.request.NoteRequester
 import com.kunminx.purenote.ui.adapter.NoteAdapter
 
 /**
  * Create by KunMinX at 2022/6/30
  */
-class ListFragment : BaseFragment((R.layout.fragment_list)) {
-  private val binding: FragmentListBinding by binding()
+class ListFragment : BaseFragment() {
   private val states by viewModels<ListStates>()
   private val noteRequester by viewModels<NoteRequester>()
+  private val httpRequester by viewModels<HttpRequester>()
   private val messenger by activityViewModels<PageMessenger>()
-  private val complexRequester by activityViewModels<ComplexRequester>()
-  private val adapter by lazy { NoteAdapter() }
+  private val adapter by lazy { NoteAdapter(states.list) }
+  private val clickProxy by lazy { ClickProxy() }
 
-  override fun onInitView() {
-    binding.rv.adapter = adapter
+  override fun getDataBindingConfig(): DataBindingConfig {
+    return DataBindingConfig(R.layout.fragment_list, BR.state, states)
+      .addBindingParam(BR.adapter, adapter)
+      .addBindingParam(BR.click, clickProxy)
   }
 
   /**
@@ -50,8 +52,8 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
     noteRequester.output(this) { noteEvent ->
       when (noteEvent) {
         is NoteEvent.GetNoteList -> {
-          states.list = noteEvent.notes!!.toMutableList()
-          updateList()
+          adapter.refresh(noteEvent.notes!!)
+          states.emptyViewShow.set(states.list.isEmpty())
         }
         is NoteEvent.ToppingItem -> {}
         is NoteEvent.MarkItem -> {}
@@ -60,13 +62,12 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
       }
     }
 
-    complexRequester.output(this) { complexEvent ->
-      when (complexEvent) {
-        is ComplexEvent.ResultTest1 -> Log.d("f complexEvent", "---1")
-        is ComplexEvent.ResultTest2 -> Log.d("f complexEvent", "---2")
-        is ComplexEvent.ResultTest3 -> Log.d("f complexEvent", "---3")
-        is ComplexEvent.ResultTest4 -> Log.d("f complexEvent", "---4 " + complexEvent.count)
+    httpRequester.output(this) { apiEvent ->
+      when (apiEvent) {
+        is ApiEvent.GetWeatherInfo -> states.weather.set(apiEvent.live?.weather!!)
+        is ApiEvent.Error -> {}
       }
+      states.loadingWeather.set(false)
     }
   }
 
@@ -78,7 +79,7 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
    *  which processes the business logic and distributes the results internally.
    */
   override fun onInput() {
-    adapter.setListener { viewId, position, item ->
+    adapter.setOnItemClick { viewId, item, position ->
       when (viewId) {
         R.id.btn_mark -> noteRequester.input(NoteEvent.MarkItem().setNote(item.copy()))
         R.id.btn_topping -> noteRequester.input(NoteEvent.ToppingItem().setNote(item.copy()))
@@ -86,14 +87,14 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
         R.id.cl -> EditorFragment.start(nav(), item)
       }
     }
-    binding.fab.setOnClickListener { EditorFragment.start(nav(), Note()) }
+    clickProxy.setOnClickListener { view ->
+      if (view.id == R.id.fab) EditorFragment.start(nav(), Note())
+    }
+    if (TextUtils.isEmpty(states.weather.get())) {
+      states.loadingWeather.set(true)
+      httpRequester.input(ApiEvent.GetWeatherInfo().setCityCode(ApiEvent.CITY_CODE_BEIJING))
+    }
     if (states.list.isEmpty()) noteRequester.input(NoteEvent.GetNoteList())
-    else updateList()
-  }
-
-  private fun updateList() {
-    adapter.setData(states.list)
-    binding.ivEmpty.visibility = if (states.list.isEmpty()) View.VISIBLE else View.GONE
   }
 
   override fun onBackPressed(): Boolean {
@@ -102,6 +103,9 @@ class ListFragment : BaseFragment((R.layout.fragment_list)) {
   }
 
   class ListStates : StateHolder() {
-    var list: MutableList<Note> = mutableListOf()
+    val list = mutableListOf<Note>()
+    val emptyViewShow = State(false)
+    val loadingWeather = State(false)
+    val weather = State("")
   }
 }

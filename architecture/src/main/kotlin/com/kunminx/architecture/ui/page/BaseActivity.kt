@@ -23,22 +23,22 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import com.kunminx.architecture.utils.AdaptScreenUtils
 
 /**
  * Create by KunMinX at 19/8/1
  */
-abstract class BaseActivity : AppCompatActivity() {
-  protected open fun onInitView() {}
+abstract class BaseActivity : DataBindingActivity() {
   protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
 
+  override fun initViewModel() {
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     transparentStatusBar(this)
     super.onCreate(savedInstanceState)
-    onInitView()
     onInitData()
     onOutput()
     onInput()

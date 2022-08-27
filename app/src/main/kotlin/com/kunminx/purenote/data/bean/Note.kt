@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.kunminx.architecture.utils.TimeUtils
+import com.kunminx.purenote.R
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -57,6 +58,9 @@ data class Note(
       mutableType or param
     }
   }
+
+  @Ignore
+  fun markIcon(): Int = if (isMarked) R.drawable.icon_star else R.drawable.icon_star_board
 
   fun copy(): Note {
     return Note(id, title, content, createTime, modifyTime, mutableType)

@@ -1,9 +1,7 @@
 package com.kunminx.purenote.ui.adapter
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.kunminx.architecture.ui.adapter.BaseAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.kunminx.architecture.ui.adapter.BaseBindingAdapter
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
 import com.kunminx.purenote.databinding.AdapterNoteListBinding
@@ -11,39 +9,57 @@ import com.kunminx.purenote.databinding.AdapterNoteListBinding
 /**
  * Create by KunMinX at 2022/7/3
  */
-class NoteAdapter : BaseAdapter<Note, AdapterNoteListBinding>() {
-  override fun onBindingData(
-    holder: BaseHolder<AdapterNoteListBinding>,
+class NoteAdapter(list: MutableList<Note>) :
+  BaseBindingAdapter<Note, AdapterNoteListBinding>(list) {
+  override fun getLayoutResId(viewType: Int): Int {
+    return R.layout.adapter_note_list
+  }
+
+  override fun onBindItem(
+    binding: AdapterNoteListBinding,
     note: Note,
-    position: Int
+    holder: RecyclerView.ViewHolder
   ) {
-    holder.binding.tvTitle.text = note.title
-    holder.binding.cl.clipToOutline = true
-    holder.binding.btnMark.setImageResource(if (note.isMarked) R.drawable.icon_star else R.drawable.icon_star_board)
-    holder.binding.tvTime.text = note.modifyDate
-    holder.binding.tvTopped.visibility = if (note.isTopping) View.VISIBLE else View.GONE
-    holder.binding.cl.setOnClickListener { v: View ->
-      if (onItemClick != null) onItemClick!!.invoke(v.id, position, note)
+    binding.setNote(note)
+    val position = holder.bindingAdapterPosition
+    binding.cl.setOnClickListener { v ->
+      itemClick?.invoke(
+        v.getId(),
+        note,
+        position
+      )
     }
-    holder.binding.btnMark.setOnClickListener { v: View ->
+    binding.btnMark.setOnClickListener { v ->
       note.toggleType(Note.TYPE_MARKED)
       notifyItemChanged(position)
       notifyItemRangeChanged(position, 1)
-      if (onItemClick != null) onItemClick!!.invoke(v.id, position, note)
+      itemClick?.invoke(
+        v.getId(),
+        note,
+        position
+      )
     }
-    holder.binding.btnTopping.setOnClickListener { v: View ->
+    binding.btnTopping.setOnClickListener { v ->
       note.toggleType(Note.TYPE_TOPPING)
-      if (onItemClick != null) onItemClick!!.invoke(v.id, position, note)
+      itemClick?.invoke(
+        v.getId(),
+        note,
+        position
+      )
     }
-    holder.binding.btnDelete.setOnClickListener { v: View ->
+    binding.btnDelete.setOnClickListener { v ->
       notifyItemRemoved(position)
-      getData().removeAt(position)
-      notifyItemRangeRemoved(position, getData().size - position)
-      if (onItemClick != null) onItemClick!!.invoke(v.id, position, note)
+      _list.removeAt(position)
+      notifyItemRangeRemoved(position, list.size - position)
+      if (itemClick != null) itemClick!!.invoke(
+        v.getId(),
+        note,
+        position
+      )
     }
   }
 
-  override fun onBindingView(viewGroup: ViewGroup): AdapterNoteListBinding {
-    return AdapterNoteListBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+  override fun getItemCount(): Int {
+    return list.size
   }
 }

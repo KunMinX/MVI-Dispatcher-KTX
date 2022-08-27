@@ -3,6 +3,9 @@ package com.kunminx.purenote.ui.page
 import android.util.Log
 import androidx.activity.viewModels
 import com.kunminx.architecture.ui.page.BaseActivity
+import com.kunminx.architecture.ui.page.DataBindingConfig
+import com.kunminx.architecture.ui.page.StateHolder
+import com.kunminx.purenote.BR
 import com.kunminx.purenote.R
 import com.kunminx.purenote.domain.event.ComplexEvent
 import com.kunminx.purenote.domain.event.Messages
@@ -10,11 +13,12 @@ import com.kunminx.purenote.domain.message.PageMessenger
 import com.kunminx.purenote.domain.request.ComplexRequester
 
 class MainActivity : BaseActivity() {
-  private val complexRequester by viewModels<ComplexRequester>()
+  private val states by viewModels<MainStates>()
   private val messenger by viewModels<PageMessenger>()
+  private val complexRequester by viewModels<ComplexRequester>()
 
-  override fun onInitView() {
-    setContentView(R.layout.activity_main)
+  override fun getDataBindingConfig(): DataBindingConfig {
+    return DataBindingConfig(R.layout.activity_main, BR.state, states)
   }
 
   /**
@@ -62,4 +66,6 @@ class MainActivity : BaseActivity() {
     complexRequester.input(ComplexEvent.ResultTest3())
     complexRequester.input(ComplexEvent.ResultTest3())
   }
+
+  class MainStates : StateHolder()
 }
