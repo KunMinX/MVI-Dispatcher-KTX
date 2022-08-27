@@ -1,6 +1,5 @@
 package com.kunminx.purenote.domain.request
 
-import android.util.Log
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.data.repo.DataRepository
 import com.kunminx.purenote.domain.event.NoteEvent
