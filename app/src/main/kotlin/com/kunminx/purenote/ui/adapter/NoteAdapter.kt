@@ -20,42 +20,26 @@ class NoteAdapter(list: MutableList<Note>) :
     note: Note,
     holder: RecyclerView.ViewHolder
   ) {
-    binding.setNote(note)
+    binding.note = note
     val position = holder.bindingAdapterPosition
     binding.cl.setOnClickListener { v ->
-      itemClick?.invoke(
-        v.getId(),
-        note,
-        position
-      )
+      itemClick?.invoke(v.id, note, position)
     }
     binding.btnMark.setOnClickListener { v ->
       note.toggleType(Note.TYPE_MARKED)
       notifyItemChanged(position)
       notifyItemRangeChanged(position, 1)
-      itemClick?.invoke(
-        v.getId(),
-        note,
-        position
-      )
+      itemClick?.invoke(v.id, note, position)
     }
     binding.btnTopping.setOnClickListener { v ->
       note.toggleType(Note.TYPE_TOPPING)
-      itemClick?.invoke(
-        v.getId(),
-        note,
-        position
-      )
+      itemClick?.invoke(v.id, note, position)
     }
     binding.btnDelete.setOnClickListener { v ->
       notifyItemRemoved(position)
       _list.removeAt(position)
       notifyItemRangeRemoved(position, list.size - position)
-      if (itemClick != null) itemClick!!.invoke(
-        v.getId(),
-        note,
-        position
-      )
+      itemClick?.invoke(v.id, note, position)
     }
   }
 
