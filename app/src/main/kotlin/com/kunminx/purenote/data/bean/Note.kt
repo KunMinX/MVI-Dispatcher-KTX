@@ -48,7 +48,7 @@ data class Note(
 
   @IgnoredOnParcel
   @Ignore
-  var mutableType: Int = type
+  private var mutableType: Int = type
 
   @Ignore
   fun toggleType(param: Int) {

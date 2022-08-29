@@ -45,9 +45,7 @@ class ListFragment : BaseFragment() {
    */
   override fun onOutput() {
     messenger.output(this) { messages ->
-      if (messages is Messages.RefreshNoteList) {
-        noteRequester.input(NoteEvent.GetNoteList())
-      }
+      if (messages is Messages.RefreshNoteList) noteRequester.input(NoteEvent.GetNoteList())
     }
     noteRequester.output(this) { noteEvent ->
       when (noteEvent) {
@@ -61,7 +59,6 @@ class ListFragment : BaseFragment() {
         else -> {}
       }
     }
-
     httpRequester.output(this) { apiEvent ->
       when (apiEvent) {
         is ApiEvent.GetWeatherInfo -> states.weather.set(apiEvent.live?.weather!!)
