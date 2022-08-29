@@ -11,7 +11,7 @@ import com.kunminx.architecture.ui.state.State
 import com.kunminx.purenote.BR
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
-import com.kunminx.purenote.domain.event.ApiEvent
+import com.kunminx.purenote.domain.event.Api
 import com.kunminx.purenote.domain.event.Messages
 import com.kunminx.purenote.domain.event.NoteEvent
 import com.kunminx.purenote.domain.message.PageMessenger
@@ -59,10 +59,10 @@ class ListFragment : BaseFragment() {
         else -> {}
       }
     }
-    httpRequester.output(this) { apiEvent ->
-      when (apiEvent) {
-        is ApiEvent.GetWeatherInfo -> states.weather.set(apiEvent.live?.weather!!)
-        is ApiEvent.Error -> {}
+    httpRequester.output(this) { api ->
+      when (api) {
+        is Api.GetWeatherInfo -> states.weather.set(api.live?.weather!!)
+        is Api.Error -> {}
       }
       states.loadingWeather.set(false)
     }
@@ -89,7 +89,7 @@ class ListFragment : BaseFragment() {
     }
     if (TextUtils.isEmpty(states.weather.get())) {
       states.loadingWeather.set(true)
-      httpRequester.input(ApiEvent.GetWeatherInfo())
+      httpRequester.input(Api.GetWeatherInfo())
     }
     if (states.list.isEmpty()) noteRequester.input(NoteEvent.GetNoteList())
   }

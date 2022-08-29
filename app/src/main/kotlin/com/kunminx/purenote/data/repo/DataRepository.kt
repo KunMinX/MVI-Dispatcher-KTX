@@ -4,7 +4,7 @@ import androidx.room.Room
 import com.kunminx.architecture.utils.Utils
 import com.kunminx.purenote.data.bean.Note
 import com.kunminx.purenote.data.bean.Weather.Live
-import com.kunminx.purenote.domain.event.ApiEvent
+import com.kunminx.purenote.domain.event.Api
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +36,7 @@ object DataRepository {
       .addInterceptor(logging)
       .build()
     mRetrofit = Retrofit.Builder()
-      .baseUrl(ApiEvent.BASE_URL)
+      .baseUrl(Api.BASE_URL)
       .client(client)
       .addConverterFactory(GsonConverterFactory.create())
       .build()
@@ -74,7 +74,7 @@ object DataRepository {
     return withContext(Dispatchers.IO) {
       val service = mRetrofit!!.create(WeatherService::class.java)
       try {
-        val weather = service.getWeatherInfo(api, cityCode, ApiEvent.API_KEY)
+        val weather = service.getWeatherInfo(api, cityCode, Api.API_KEY)
         return@withContext Pair(weather.lives?.get(0), "")
       } catch (e: Exception) {
         return@withContext Pair(Live(), e.message.toString())
