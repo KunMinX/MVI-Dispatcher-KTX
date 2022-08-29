@@ -91,7 +91,7 @@ class EditorFragment : BaseFragment() {
     } else {
       Note(tempNote.id, title!!, content!!, tempNote.createTime, time, tempNote.type)
     }
-    noteRequester.input(NoteEvent.AddItem().setNote(note))
+    noteRequester.input(NoteEvent.AddItem(param = note))
     return true
   }
 

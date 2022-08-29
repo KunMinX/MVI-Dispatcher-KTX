@@ -81,9 +81,9 @@ class ListFragment : BaseFragment() {
   override fun onInput() {
     adapter.setOnItemClick { viewId, item, position ->
       when (viewId) {
-        R.id.btn_mark -> noteRequester.input(NoteEvent.MarkItem().setNote(item.copy()))
-        R.id.btn_topping -> noteRequester.input(NoteEvent.ToppingItem().setNote(item.copy()))
-        R.id.btn_delete -> noteRequester.input(NoteEvent.RemoveItem().setNote(item))
+        R.id.btn_mark -> noteRequester.input(NoteEvent.MarkItem(param = item.copy()))
+        R.id.btn_topping -> noteRequester.input(NoteEvent.ToppingItem(param = item.copy()))
+        R.id.btn_delete -> noteRequester.input(NoteEvent.RemoveItem(param = item))
         R.id.cl -> EditorFragment.start(nav(), item)
       }
     }

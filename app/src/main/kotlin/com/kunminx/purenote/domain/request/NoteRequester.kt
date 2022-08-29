@@ -26,13 +26,13 @@ class NoteRequester : MviDispatcherKTX<NoteEvent>() {
    */
   override suspend fun onHandle(event: NoteEvent) {
     when (event) {
-      is NoteEvent.MarkItem -> sendResult(event.copy(DataRepository.updateNote(event.note!!)))
-      is NoteEvent.UpdateItem -> sendResult(event.copy(DataRepository.updateNote(event.note!!)))
-      is NoteEvent.AddItem -> sendResult(event.copy(DataRepository.insertNote(event.note!!)))
-      is NoteEvent.RemoveItem -> sendResult(event.copy(DataRepository.deleteNote(event.note!!)))
+      is NoteEvent.MarkItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
+      is NoteEvent.UpdateItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
+      is NoteEvent.AddItem -> sendResult(event.copy(isSuccess = DataRepository.insertNote(event.param!!)))
+      is NoteEvent.RemoveItem -> sendResult(event.copy(isSuccess = DataRepository.deleteNote(event.param!!)))
       is NoteEvent.GetNoteList -> sendResult(event.copy(DataRepository.getNotes().firstOrNull()))
       is NoteEvent.ToppingItem -> {
-        val success = DataRepository.updateNote(event.note!!)
+        val success = DataRepository.updateNote(event.param!!)
         if (success) sendResult(NoteEvent.GetNoteList(DataRepository.getNotes().firstOrNull()))
       }
     }
