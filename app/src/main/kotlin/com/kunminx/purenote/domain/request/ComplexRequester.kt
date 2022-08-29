@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
  */
 class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
 
-  private var _interval: Flow<Int>? = null
+  private val _interval: Flow<Int> = interval(1000)
 
   /**
    * TODO tip 1：
@@ -36,12 +36,7 @@ class ComplexRequester : MviDispatcherKTX<ComplexEvent>() {
       // Fixed length queue, on demand, never lose events
       // Here, Flow polling simulation events are sent repeatedly, and the output can be seen in logcat debug
 
-      is ComplexEvent.ResultTest1 -> {
-        if (_interval == null) {
-          _interval = interval(1000)
-          _interval?.collect { input(ComplexEvent.ResultTest4(it)) }
-        }
-      }
+      is ComplexEvent.ResultTest1 -> _interval.collect { input(ComplexEvent.ResultTest4(it)) }
       is ComplexEvent.ResultTest2 -> timer(1000).collect { sendResult(event) }
       is ComplexEvent.ResultTest3 -> sendResult(event)
       is ComplexEvent.ResultTest4 -> sendResult(event)
