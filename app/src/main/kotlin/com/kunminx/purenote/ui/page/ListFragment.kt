@@ -92,7 +92,7 @@ class ListFragment : BaseFragment() {
     }
     if (TextUtils.isEmpty(states.weather.get())) {
       states.loadingWeather.set(true)
-      httpRequester.input(ApiEvent.GetWeatherInfo().setCityCode(ApiEvent.CITY_CODE_BEIJING))
+      httpRequester.input(ApiEvent.GetWeatherInfo())
     }
     if (states.list.isEmpty()) noteRequester.input(NoteEvent.GetNoteList())
   }

@@ -6,14 +6,14 @@ import com.kunminx.purenote.data.bean.Weather
  * Create by KunMinX at 2022/8/24
  */
 sealed class ApiEvent {
-  var cityCode: String? = null
-  fun setCityCode(cityCode: String = CITY_CODE_BEIJING): ApiEvent {
-    this.cityCode = cityCode
-    return this
-  }
+  data class GetWeatherInfo(
+    val param: String = CITY_CODE_BEIJING,
+    val live: Weather.Live? = null
+  ) : ApiEvent()
 
-  data class GetWeatherInfo(val live: Weather.Live? = null) : ApiEvent()
-  data class Error(val errorInfo: String? = null) : ApiEvent()
+  data class Error(
+    val errorInfo: String? = null
+  ) : ApiEvent()
 
   companion object {
     const val API_KEY = "32d8017dd7b9c2954aa55496a62033c5"

@@ -11,8 +11,8 @@ class HttpRequester : MviDispatcherKTX<ApiEvent>() {
   override suspend fun onHandle(event: ApiEvent) {
     when (event) {
       is ApiEvent.GetWeatherInfo -> {
-        val result = DataRepository.getWeatherInfo(ApiEvent.GET_WEATHER_INFO, event.cityCode!!)
-        if (result.second.isEmpty()) sendResult(event.copy(result.first))
+        val result = DataRepository.getWeatherInfo(ApiEvent.GET_WEATHER_INFO, event.param)
+        if (result.second.isEmpty()) sendResult(event.copy(live = result.first))
         else input(ApiEvent.Error(result.second))
       }
       is ApiEvent.Error -> sendResult(event)
