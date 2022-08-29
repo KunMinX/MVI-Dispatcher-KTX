@@ -12,8 +12,8 @@ sealed class ApiEvent {
     return this
   }
 
-  data class GetWeatherInfo(var live: Weather.Live? = null) : ApiEvent()
-  data class Error(var errorInfo: String? = null) : ApiEvent()
+  data class GetWeatherInfo(val live: Weather.Live? = null) : ApiEvent()
+  data class Error(val errorInfo: String? = null) : ApiEvent()
 
   companion object {
     const val API_KEY = "32d8017dd7b9c2954aa55496a62033c5"

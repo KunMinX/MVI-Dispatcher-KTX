@@ -12,10 +12,10 @@ sealed class NoteEvent {
     return this
   }
 
-  data class GetNoteList(var notes: List<Note>? = null) : NoteEvent()
-  data class RemoveItem(var isSuccess: Boolean = true) : NoteEvent()
-  data class UpdateItem(var isSuccess: Boolean = true) : NoteEvent()
-  data class MarkItem(var isSuccess: Boolean = true) : NoteEvent()
-  data class ToppingItem(var isSuccess: Boolean = true) : NoteEvent()
-  data class AddItem(var isSuccess: Boolean = true) : NoteEvent()
+  data class GetNoteList(val notes: List<Note>? = null) : NoteEvent()
+  data class RemoveItem(val isSuccess: Boolean = true) : NoteEvent()
+  data class UpdateItem(val isSuccess: Boolean = true) : NoteEvent()
+  data class MarkItem(val isSuccess: Boolean = true) : NoteEvent()
+  data class ToppingItem(val isSuccess: Boolean = true) : NoteEvent()
+  data class AddItem(val isSuccess: Boolean = true) : NoteEvent()
 }
