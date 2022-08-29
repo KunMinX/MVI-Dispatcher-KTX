@@ -8,7 +8,7 @@ android {
   compileSdk appTargetSdk
   namespace "com.kunminx.architecture"
   defaultConfig {
-    minSdk appMinSdk
+    minSdk 23
     targetSdk appTargetSdk
     versionCode appVersionCode
     versionName appVersionName

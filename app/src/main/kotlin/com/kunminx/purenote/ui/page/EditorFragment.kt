@@ -42,7 +42,6 @@ class EditorFragment : BaseFragment() {
       states.content.set(states.tempNote.get()?.content!!)
       if (TextUtils.isEmpty(states.tempNote.get()?.id)) {
         states.titleRequestFocus.set(true)
-        showKeyboard()
       } else {
         states.tip.set(getString(R.string.last_time_modify))
         states.time.set(states.tempNote.get()?.modifyDate!!)
