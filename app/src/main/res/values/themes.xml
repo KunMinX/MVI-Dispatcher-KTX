@@ -1,11 +1,11 @@
 <resources>
 
-    <style name="Theme.PureNote" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/color_white</item>
-        <item name="colorSecondary">@color/blue</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/color_white</item>
-    </style>
+  <style name="Theme.PureNote" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/purple_500</item>
+    <item name="colorPrimaryVariant">@color/purple_700</item>
+    <item name="colorOnPrimary">@color/color_white</item>
+    <item name="colorSecondary">@color/blue</item>
+    <item name="colorSecondaryVariant">@color/teal_700</item>
+    <item name="colorOnSecondary">@color/color_white</item>
+  </style>
 </resources>
