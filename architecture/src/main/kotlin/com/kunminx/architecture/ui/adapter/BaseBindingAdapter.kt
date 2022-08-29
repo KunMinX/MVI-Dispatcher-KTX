@@ -33,11 +33,12 @@ abstract class BaseBindingAdapter<M, B : ViewDataBinding>(var _list: MutableList
       false
     )
     val holder = BaseBindingViewHolder(binding!!.root)
-    val position = holder.bindingAdapterPosition
     holder.itemView.setOnClickListener { v ->
+      val position = holder.bindingAdapterPosition
       itemClick?.invoke(holder.itemView.id, _list[position], position)
     }
     holder.itemView.setOnLongClickListener { v ->
+      val position = holder.bindingAdapterPosition
       itemLongClick?.invoke(holder.itemView.id, _list[position], position)
       return@setOnLongClickListener true
     }

@@ -4,7 +4,6 @@
   xmlns:tools="http://schemas.android.com/tools">
 
   <data>
-
     <variable
       name="note"
       type="com.kunminx.purenote.data.bean.Note" />
