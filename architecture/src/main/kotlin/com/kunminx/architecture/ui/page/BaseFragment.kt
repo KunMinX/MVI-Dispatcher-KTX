@@ -15,18 +15,12 @@
  */
 package com.kunminx.architecture.ui.page
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 
@@ -34,7 +28,6 @@ import androidx.navigation.fragment.NavHostFragment
  * Create by KunMinX at 19/7/11
  */
 abstract class BaseFragment : DataBindingFragment() {
-  protected val mActivity by lazy { context as AppCompatActivity }
   protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
