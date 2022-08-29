@@ -15,10 +15,13 @@
  */
 package com.kunminx.architecture.ui.bind
 
+import android.content.Context
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.kunminx.architecture.utils.Utils
 
 /**
  * Create by KunMinX at 19/9/18
@@ -33,6 +36,7 @@ object CommonBindingAdapter {
       view.visibility = View.GONE
     }
   }
+
   @JvmStatic
   @BindingAdapter(value = ["invisible"], requireAll = false)
   fun invisible(view: View, visible: Boolean) {
@@ -42,29 +46,41 @@ object CommonBindingAdapter {
       view.visibility = View.INVISIBLE
     }
   }
+
   @JvmStatic
   @BindingAdapter(value = ["imgRes"], requireAll = false)
   fun setImageResource(imageView: ImageView, imgRes: Int) {
     imageView.setImageResource(imgRes)
   }
+
   @JvmStatic
   @BindingAdapter(value = ["textColor"], requireAll = false)
   fun setTextColor(textView: TextView, textColorRes: Int) {
     textView.setTextColor(textView.context.getColor(textColorRes))
   }
+
   @JvmStatic
   @BindingAdapter(value = ["selected"], requireAll = false)
   fun selected(view: View, select: Boolean) {
     view.isSelected = select
   }
+
   @JvmStatic
   @BindingAdapter(value = ["clipToOutline"], requireAll = false)
   fun clipToOutline(view: View, clipToOutline: Boolean) {
     view.clipToOutline = clipToOutline
   }
+
   @JvmStatic
   @BindingAdapter(value = ["requestFocus"], requireAll = false)
   fun requestFocus(view: View, requestFocus: Boolean) {
     if (requestFocus) view.requestFocus()
+  }
+
+  @JvmStatic
+  @BindingAdapter(value = ["showKeyboard"], requireAll = false)
+  fun showKeyboard(view: View, showKeyboard: Boolean) {
+    val imm = Utils.app?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
   }
 }

@@ -48,11 +48,6 @@ abstract class BaseActivity : DataBindingActivity() {
     return AdaptScreenUtils.getAdaptResult()
   }
 
-  protected fun toggleSoftInput() {
-    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
-  }
-
   protected fun openUrlInBrowser(url: String?) {
     val uri = Uri.parse(url)
     val intent = Intent(Intent.ACTION_VIEW, uri)

@@ -24,6 +24,9 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 
@@ -53,15 +56,6 @@ abstract class BaseFragment : DataBindingFragment() {
 
   protected fun nav(): NavController {
     return NavHostFragment.findNavController(this)
-  }
-
-  protected fun toggleSoftInput() {
-    val imm = mActivity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
-  }
-
-  protected open fun showKeyboard() {
-    if (mActivity != null) mActivity.window.decorView.post { toggleSoftInput() }
   }
 
   protected fun openUrlInBrowser(url: String?) {
