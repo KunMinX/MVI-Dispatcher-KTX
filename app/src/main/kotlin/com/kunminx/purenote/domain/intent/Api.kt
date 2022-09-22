@@ -6,6 +6,8 @@ import com.kunminx.purenote.data.bean.Weather
  * Create by KunMinX at 2022/8/24
  */
 sealed class Api {
+  data class Loading(val isLoading: Boolean) : Api()
+
   data class GetWeatherInfo(
     val param: String = CITY_CODE_BEIJING,
     val live: Weather.Live? = null

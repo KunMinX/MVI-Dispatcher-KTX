@@ -10,7 +10,9 @@ import com.kunminx.purenote.domain.intent.Api
 class HttpRequester : MviDispatcherKTX<Api>() {
   override suspend fun onHandle(event: Api) {
     when (event) {
+      is Api.Loading -> sendResult(event)
       is Api.GetWeatherInfo -> {
+        input(Api.Loading(true))
         val result = DataRepository.getWeatherInfo(Api.GET_WEATHER_INFO, event.param)
         if (result.second.isEmpty()) sendResult(event.copy(live = result.first))
         else input(Api.Error(result.second))

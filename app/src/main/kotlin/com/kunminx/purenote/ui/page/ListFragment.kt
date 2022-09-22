@@ -61,6 +61,7 @@ class ListFragment : BaseFragment() {
     }
     httpRequester.output(this) { api ->
       when (api) {
+        is Api.Loading -> states.loadingWeather.set(api.isLoading)
         is Api.GetWeatherInfo -> states.weather.set(api.live?.weather!!)
         is Api.Error -> {}
       }
@@ -88,7 +89,6 @@ class ListFragment : BaseFragment() {
       if (view.id == R.id.fab) EditorFragment.start(nav(), Note())
     }
     if (TextUtils.isEmpty(states.weather.get())) {
-      states.loadingWeather.set(true)
       httpRequester.input(Api.GetWeatherInfo())
     }
     if (states.list.isEmpty()) noteRequester.input(NoteIntent.GetNoteList())
