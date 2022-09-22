@@ -16,6 +16,7 @@ class HttpRequester : MviDispatcherKTX<Api>() {
         val result = DataRepository.getWeatherInfo(Api.GET_WEATHER_INFO, event.param)
         if (result.second.isEmpty()) sendResult(event.copy(live = result.first))
         else input(Api.Error(result.second))
+        input(Api.Loading(false))
       }
       is Api.Error -> sendResult(event)
     }
