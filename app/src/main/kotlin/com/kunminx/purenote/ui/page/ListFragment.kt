@@ -11,9 +11,9 @@ import com.kunminx.architecture.ui.state.State
 import com.kunminx.purenote.BR
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
-import com.kunminx.purenote.domain.event.Api
-import com.kunminx.purenote.domain.event.Messages
-import com.kunminx.purenote.domain.event.NoteEvent
+import com.kunminx.purenote.domain.intent.Api
+import com.kunminx.purenote.domain.intent.Messages
+import com.kunminx.purenote.domain.intent.NoteIntent
 import com.kunminx.purenote.domain.message.PageMessenger
 import com.kunminx.purenote.domain.request.HttpRequester
 import com.kunminx.purenote.domain.request.NoteRequester
@@ -45,17 +45,17 @@ class ListFragment : BaseFragment() {
    */
   override fun onOutput() {
     messenger.output(this) { messages ->
-      if (messages is Messages.RefreshNoteList) noteRequester.input(NoteEvent.GetNoteList())
+      if (messages is Messages.RefreshNoteList) noteRequester.input(NoteIntent.GetNoteList())
     }
     noteRequester.output(this) { noteEvent ->
       when (noteEvent) {
-        is NoteEvent.GetNoteList -> {
+        is NoteIntent.GetNoteList -> {
           adapter.refresh(noteEvent.notes!!)
           states.emptyViewShow.set(states.list.isEmpty())
         }
-        is NoteEvent.ToppingItem -> {}
-        is NoteEvent.MarkItem -> {}
-        is NoteEvent.RemoveItem -> {}
+        is NoteIntent.ToppingItem -> {}
+        is NoteIntent.MarkItem -> {}
+        is NoteIntent.RemoveItem -> {}
         else -> {}
       }
     }
@@ -78,9 +78,9 @@ class ListFragment : BaseFragment() {
   override fun onInput() {
     adapter.setOnItemClick { viewId, item, position ->
       when (viewId) {
-        R.id.btn_mark -> noteRequester.input(NoteEvent.MarkItem(param = item.copy()))
-        R.id.btn_topping -> noteRequester.input(NoteEvent.ToppingItem(param = item.copy()))
-        R.id.btn_delete -> noteRequester.input(NoteEvent.RemoveItem(param = item))
+        R.id.btn_mark -> noteRequester.input(NoteIntent.MarkItem(param = item.copy()))
+        R.id.btn_topping -> noteRequester.input(NoteIntent.ToppingItem(param = item.copy()))
+        R.id.btn_delete -> noteRequester.input(NoteIntent.RemoveItem(param = item))
         R.id.cl -> EditorFragment.start(nav(), item)
       }
     }
@@ -91,7 +91,7 @@ class ListFragment : BaseFragment() {
       states.loadingWeather.set(true)
       httpRequester.input(Api.GetWeatherInfo())
     }
-    if (states.list.isEmpty()) noteRequester.input(NoteEvent.GetNoteList())
+    if (states.list.isEmpty()) noteRequester.input(NoteIntent.GetNoteList())
   }
 
   override fun onBackPressed(): Boolean {

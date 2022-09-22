@@ -2,13 +2,13 @@ package com.kunminx.purenote.domain.request
 
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.data.repo.DataRepository
-import com.kunminx.purenote.domain.event.NoteEvent
+import com.kunminx.purenote.domain.intent.NoteIntent
 import kotlinx.coroutines.flow.firstOrNull
 
 /**
  * Create by KunMinX at 2022/6/14
  */
-class NoteRequester : MviDispatcherKTX<NoteEvent>() {
+class NoteRequester : MviDispatcherKTX<NoteIntent>() {
   /**
    * TODO tip 1：
    *  作为 '唯一可信源'，接收发自页面消息，内部统一处理业务逻辑，并通过 sendResult 结果分发。
@@ -24,16 +24,16 @@ class NoteRequester : MviDispatcherKTX<NoteEvent>() {
    *  automatically eliminates the high-frequency pain spots of "mutable boilerplate code
    *  & mutableSharedFlow.setValue abuse & repeatOnLifecycle + SharedFlow miss result".
    */
-  override suspend fun onHandle(event: NoteEvent) {
+  override suspend fun onHandle(event: NoteIntent) {
     when (event) {
-      is NoteEvent.MarkItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
-      is NoteEvent.UpdateItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
-      is NoteEvent.AddItem -> sendResult(event.copy(isSuccess = DataRepository.insertNote(event.param!!)))
-      is NoteEvent.RemoveItem -> sendResult(event.copy(isSuccess = DataRepository.deleteNote(event.param!!)))
-      is NoteEvent.GetNoteList -> sendResult(event.copy(DataRepository.getNotes().firstOrNull()))
-      is NoteEvent.ToppingItem -> {
+      is NoteIntent.MarkItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
+      is NoteIntent.UpdateItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
+      is NoteIntent.AddItem -> sendResult(event.copy(isSuccess = DataRepository.insertNote(event.param!!)))
+      is NoteIntent.RemoveItem -> sendResult(event.copy(isSuccess = DataRepository.deleteNote(event.param!!)))
+      is NoteIntent.GetNoteList -> sendResult(event.copy(DataRepository.getNotes().firstOrNull()))
+      is NoteIntent.ToppingItem -> {
         val success = DataRepository.updateNote(event.param!!)
-        if (success) sendResult(NoteEvent.GetNoteList(DataRepository.getNotes().firstOrNull()))
+        if (success) sendResult(NoteIntent.GetNoteList(DataRepository.getNotes().firstOrNull()))
       }
     }
   }

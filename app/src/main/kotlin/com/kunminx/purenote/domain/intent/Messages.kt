@@ -1,4 +1,4 @@
-package com.kunminx.purenote.domain.event
+package com.kunminx.purenote.domain.intent
 
 /**
  * Create by KunMinX at 2022/6/16

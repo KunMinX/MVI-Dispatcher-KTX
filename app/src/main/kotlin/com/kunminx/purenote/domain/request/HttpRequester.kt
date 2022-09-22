@@ -2,7 +2,7 @@ package com.kunminx.purenote.domain.request
 
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.data.repo.DataRepository
-import com.kunminx.purenote.domain.event.Api
+import com.kunminx.purenote.domain.intent.Api
 
 /**
  * Create by KunMinX at 2022/8/24

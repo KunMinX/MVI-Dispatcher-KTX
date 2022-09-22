@@ -15,8 +15,8 @@ import com.kunminx.architecture.utils.Utils
 import com.kunminx.purenote.BR
 import com.kunminx.purenote.R
 import com.kunminx.purenote.data.bean.Note
-import com.kunminx.purenote.domain.event.Messages
-import com.kunminx.purenote.domain.event.NoteEvent
+import com.kunminx.purenote.domain.intent.Messages
+import com.kunminx.purenote.domain.intent.NoteIntent
 import com.kunminx.purenote.domain.message.PageMessenger
 import com.kunminx.purenote.domain.request.NoteRequester
 import java.util.*
@@ -58,7 +58,7 @@ class EditorFragment : BaseFragment() {
    */
   override fun onOutput() {
     noteRequester.output(this) { noteEvent ->
-      if (noteEvent is NoteEvent.AddItem) {
+      if (noteEvent is NoteIntent.AddItem) {
         messenger.input(Messages.RefreshNoteList)
         ToastUtils.showShortToast(getString(R.string.saved))
         nav().navigateUp()
@@ -91,7 +91,7 @@ class EditorFragment : BaseFragment() {
     } else {
       Note(tempNote.id, title!!, content!!, tempNote.createTime, time, tempNote.type)
     }
-    noteRequester.input(NoteEvent.AddItem(param = note))
+    noteRequester.input(NoteIntent.AddItem(param = note))
     return true
   }
 

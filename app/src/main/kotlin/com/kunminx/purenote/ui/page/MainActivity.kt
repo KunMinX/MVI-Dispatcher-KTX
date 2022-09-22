@@ -7,8 +7,8 @@ import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.kunminx.architecture.ui.page.StateHolder
 import com.kunminx.purenote.BR
 import com.kunminx.purenote.R
-import com.kunminx.purenote.domain.event.ComplexEvent
-import com.kunminx.purenote.domain.event.Messages
+import com.kunminx.purenote.domain.intent.ComplexIntent
+import com.kunminx.purenote.domain.intent.Messages
 import com.kunminx.purenote.domain.message.PageMessenger
 import com.kunminx.purenote.domain.request.ComplexRequester
 
@@ -35,10 +35,10 @@ class MainActivity : BaseActivity() {
 
     complexRequester.output(this) { complexEvent ->
       when (complexEvent) {
-        is ComplexEvent.ResultTest1 -> Log.d("complexEvent", "---1")
-        is ComplexEvent.ResultTest2 -> Log.d("complexEvent", "---2")
-        is ComplexEvent.ResultTest3 -> Log.d("complexEvent", "---3")
-        is ComplexEvent.ResultTest4 -> Log.d("complexEvent", "---4 " + complexEvent.count)
+        is ComplexIntent.ResultTest1 -> Log.d("complexEvent", "---1")
+        is ComplexIntent.ResultTest2 -> Log.d("complexEvent", "---2")
+        is ComplexIntent.ResultTest3 -> Log.d("complexEvent", "---3")
+        is ComplexIntent.ResultTest4 -> Log.d("complexEvent", "---4 " + complexEvent.count)
       }
     }
   }
@@ -57,14 +57,14 @@ class MainActivity : BaseActivity() {
     // ~
     // Here you can see through dispatcher Input sends multiple events continuously without being overwritten
 
-    complexRequester.input(ComplexEvent.ResultTest1())
-    complexRequester.input(ComplexEvent.ResultTest2())
-    complexRequester.input(ComplexEvent.ResultTest2())
-    complexRequester.input(ComplexEvent.ResultTest2())
-    complexRequester.input(ComplexEvent.ResultTest2())
-    complexRequester.input(ComplexEvent.ResultTest3())
-    complexRequester.input(ComplexEvent.ResultTest3())
-    complexRequester.input(ComplexEvent.ResultTest3())
+    complexRequester.input(ComplexIntent.ResultTest1())
+    complexRequester.input(ComplexIntent.ResultTest2())
+    complexRequester.input(ComplexIntent.ResultTest2())
+    complexRequester.input(ComplexIntent.ResultTest2())
+    complexRequester.input(ComplexIntent.ResultTest2())
+    complexRequester.input(ComplexIntent.ResultTest3())
+    complexRequester.input(ComplexIntent.ResultTest3())
+    complexRequester.input(ComplexIntent.ResultTest3())
   }
 
   class MainStates : StateHolder()
