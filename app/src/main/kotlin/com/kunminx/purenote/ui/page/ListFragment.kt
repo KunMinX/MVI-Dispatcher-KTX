@@ -65,7 +65,6 @@ class ListFragment : BaseFragment() {
         is Api.GetWeatherInfo -> states.weather.set(api.live?.weather!!)
         is Api.Error -> {}
       }
-      states.loadingWeather.set(false)
     }
   }
 
@@ -88,9 +87,7 @@ class ListFragment : BaseFragment() {
     clickProxy.setOnClickListener { view ->
       if (view.id == R.id.fab) EditorFragment.start(nav(), Note())
     }
-    if (TextUtils.isEmpty(states.weather.get())) {
-      httpRequester.input(Api.GetWeatherInfo())
-    }
+    if (TextUtils.isEmpty(states.weather.get())) httpRequester.input(Api.GetWeatherInfo())
     if (states.list.isEmpty()) noteRequester.input(NoteIntent.GetNoteList())
   }
 
