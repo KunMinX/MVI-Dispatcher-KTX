@@ -77,13 +77,13 @@ class EditorFragment : BaseFragment() {
     clickProxy.setOnClickListener { v -> if (v.id == R.id.btn_back) save() }
   }
 
-  private fun save(): Boolean {
+  private fun save() {
     val tempNote = states.tempNote.get()
     val title = states.title.get()
     val content = states.content.get()
     val empty = TextUtils.isEmpty(title + content)
     val unChanged = tempNote?.title == title && tempNote?.content == content
-    if (empty || unChanged) return nav().navigateUp()
+    if (empty || unChanged) nav().navigateUp()
 
     val time = System.currentTimeMillis()
     val note: Note = if (tempNote?.id?.isEmpty()!!) {
@@ -92,11 +92,10 @@ class EditorFragment : BaseFragment() {
       Note(tempNote.id, title!!, content!!, tempNote.createTime, time, tempNote.type)
     }
     noteRequester.input(NoteIntent.AddItem(param = note))
-    return true
   }
 
-  override fun onBackPressed(): Boolean {
-    return save()
+  override fun onBackPressed() {
+    save()
   }
 
   /**

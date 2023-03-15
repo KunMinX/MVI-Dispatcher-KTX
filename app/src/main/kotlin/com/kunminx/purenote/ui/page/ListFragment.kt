@@ -91,9 +91,8 @@ class ListFragment : BaseFragment() {
     if (states.list.isEmpty()) noteRequester.input(NoteIntent.GetNoteList())
   }
 
-  override fun onBackPressed(): Boolean {
+  override fun onBackPressed() {
     messenger.input(Messages.FinishActivity)
-    return super.onBackPressed()
   }
 
   /**

@@ -28,6 +28,7 @@ import androidx.navigation.fragment.NavHostFragment
  * Create by KunMinX at 19/7/11
  */
 abstract class BaseFragment : DataBindingFragment() {
+  protected open val isAllowBackPress = true
   protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
@@ -37,7 +38,7 @@ abstract class BaseFragment : DataBindingFragment() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    addOnBackPressed()
+    if (isAllowBackPress) addOnBackPressed()
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,12 +65,11 @@ abstract class BaseFragment : DataBindingFragment() {
       this,
       object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-          if (!onBackPressed()) requireActivity().onBackPressedDispatcher.onBackPressed()
+          onBackPressed()
         }
       })
   }
 
-  protected open fun onBackPressed(): Boolean {
-    return true
+  protected open fun onBackPressed() {
   }
 }
