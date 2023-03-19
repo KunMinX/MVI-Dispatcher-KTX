@@ -17,8 +17,7 @@ sealed class Api {
     val errorInfo: String? = null
   ) : Api()
 
-  //TODO 由于有人挪用和滥用本 API_KEY，本账号已被封，所属天气 API 也不再能使用，
-  // 如有需要，请自行在 "高德开放平台" 获取和填入
+  //TODO 天气示例使用高德 API_KEY，如有需要，请自行在 "高德开放平台" 获取和在 Api 类填入
 
   companion object {
     const val API_KEY = ""
