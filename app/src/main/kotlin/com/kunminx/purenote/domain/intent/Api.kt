@@ -17,8 +17,11 @@ sealed class Api {
     val errorInfo: String? = null
   ) : Api()
 
+  //TODO 由于有人挪用和滥用本 API_KEY，本账号已被封，所属天气 API 也不再能使用，
+  // 如有需要，请自行在 "高德开放平台" 获取和填入
+
   companion object {
-    const val API_KEY = "32d8017dd7b9c2954aa55496a62033c5"
+    const val API_KEY = ""
     const val BASE_URL = "https://restapi.amap.com/v3/"
     const val GET_WEATHER_INFO = "weatherInfo"
     const val ERROR = "error"

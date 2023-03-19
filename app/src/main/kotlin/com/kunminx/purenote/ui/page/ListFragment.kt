@@ -87,7 +87,11 @@ class ListFragment : BaseFragment() {
     clickProxy.setOnClickListener { view ->
       if (view.id == R.id.fab) EditorFragment.start(nav(), Note())
     }
-    if (TextUtils.isEmpty(states.weather.get())) httpRequester.input(Api.GetWeatherInfo())
+
+    //TODO 由于有人挪用和滥用本 API_KEY，本账号已被封，所属天气 API 也不再能使用，
+    // 如有需要，请自行在 "高德开放平台" 获取和在 Api 类填入
+    //    if (TextUtils.isEmpty(states.weather.get())) httpRequester.input(Api.GetWeatherInfo())
+
     if (states.list.isEmpty()) noteRequester.input(NoteIntent.GetNoteList())
   }
 
