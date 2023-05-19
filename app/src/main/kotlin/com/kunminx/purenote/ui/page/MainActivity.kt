@@ -24,9 +24,6 @@ class MainActivity : BaseActivity() {
   /**
    * TODO tip 1：
    *  通过唯一出口 'dispatcher.output' 统一接收 '可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
-   *  ~
-   *  Through the only exit 'dispatcher.output()' uniformly receives the message pushed back
-   *  by the Single Source of Truth, and processes the UI logic according to the ID shunting.
    */
   override fun onOutput() {
     messenger.output(this) { messages ->
@@ -46,16 +43,11 @@ class MainActivity : BaseActivity() {
   /**
    * TODO tip 2：
    *  通过唯一入口 'dispatcher.input' 发消息至 "可信源"，由其内部统一处理业务逻辑和结果分发。
-   *  ~
-   *  Through the unique entry 'dispatcher Input' sends a message to the Single Source of Truth,
-   *  which processes the business logic and distributes the results internally.
    */
   override fun onInput() {
     super.onInput()
 
     //TODO 此处展示通过 dispatcher.input 连续发送多事件而不被覆盖
-    // ~
-    // Here you can see through dispatcher Input sends multiple events continuously without being overwritten
 
     complexRequester.input(ComplexIntent.ResultTest1())
     complexRequester.input(ComplexIntent.ResultTest2())
