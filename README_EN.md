@@ -1,3 +1,5 @@
+&nbsp;
+
 **Development story**:
 
 [《Android: Solving the Pain Points of MVI Architecture in Practice》](https://blog.devgenius.io/android-solving-the-pain-points-of-mvi-architecture-in-practice-4971fa9ed9c0)
@@ -52,7 +54,7 @@ Furthermore, the improvements and optimizations of MVI-Dispatcher include:
 > 1. It can completely eliminate mutable boilerplate code, without writing a single line.
 > 2. It can prevent new team members from misusing mutable.setValue() in Activity/Fragment.
 > 3. Developers only need to focus on input and output. They inject events through the unique input entry point and observe them through the unique output exit point.
-> 4. New team members can automatically implement "reactive" development based on the concise and easy-to-understand input-output design of MVI-Dispatcher without being familiar with LiveData, UnPeekLiveData, SharedFlow, mutable, or MVI.
+> 4. New team members can automatically implement "reactive" development based on the concise and easy-to-understand input-output design of MVI-Dispatcher without being familiar with StateFlow, SharedFlow, mutable, or MVI.
 > 5. It can be seamlessly integrated into Jetpack MVVM and other pattern projects.
 
 &nbsp;

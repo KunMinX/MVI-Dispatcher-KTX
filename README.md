@@ -1,3 +1,5 @@
+&nbsp;
+
 ### [🌏 English README](https://github.com/KunMinX/MVI-Dispatcher-KTX/blob/main/README_EN.md)
 
 研发故事：[《解决 MVI 架构实战痛点》](https://juejin.cn/post/7134594010642907149)
@@ -58,7 +60,7 @@ MVI-Dispatcher 应运而生，
 >
 > 3.开发者只需关注 input、output 二处，**从唯一入口 input 注入 Event，并于唯一出口 output 观察**
 >
-> 4.团队新手在不熟 LiveData、UnPeekLiveData、SharedFlow、mutable、MVI 情况下，仅根据 MVI-Dispatcher 简明易懂 input-output 设计亦可自动实现 “响应式” 开发
+> 4.团队新手在不熟 StateFlow、SharedFlow、mutable、MVI 情况下，仅根据 MVI-Dispatcher 简明易懂 input-output 设计亦可自动实现 “响应式” 开发
 >
 > 5.可无缝整合至 Jetpack MVVM 等模式项目
 
