@@ -7,7 +7,7 @@ import com.kunminx.purenote.domain.intent.Api
 /**
  * Create by KunMinX at 2022/8/24
  */
-class HttpRequester : MviDispatcherKTX<Api>() {
+class WeatherRequester : MviDispatcherKTX<Api>() {
   /**
    * TODO tip 1：
    *  此为领域层组件，接收发自页面消息，内部统一处理业务逻辑，并通过 sendResult 结果分发。

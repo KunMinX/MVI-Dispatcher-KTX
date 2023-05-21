@@ -1,6 +1,5 @@
 package com.kunminx.purenote.ui.page
 
-import android.text.TextUtils
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.kunminx.architecture.ui.bind.ClickProxy
@@ -15,7 +14,7 @@ import com.kunminx.purenote.domain.intent.Api
 import com.kunminx.purenote.domain.intent.Messages
 import com.kunminx.purenote.domain.intent.NoteIntent
 import com.kunminx.purenote.domain.message.PageMessenger
-import com.kunminx.purenote.domain.request.HttpRequester
+import com.kunminx.purenote.domain.request.WeatherRequester
 import com.kunminx.purenote.domain.request.NoteRequester
 import com.kunminx.purenote.ui.adapter.NoteAdapter
 
@@ -25,7 +24,7 @@ import com.kunminx.purenote.ui.adapter.NoteAdapter
 class ListFragment : BaseFragment() {
   private val states by viewModels<ListStates>()
   private val noteRequester by viewModels<NoteRequester>()
-  private val httpRequester by viewModels<HttpRequester>()
+  private val weatherRequester by viewModels<WeatherRequester>()
   private val messenger by activityViewModels<PageMessenger>()
   private val adapter by lazy { NoteAdapter(states.list) }
   private val clickProxy by lazy { ClickProxy() }
@@ -56,7 +55,7 @@ class ListFragment : BaseFragment() {
         else -> {}
       }
     }
-    httpRequester.output(this) { api ->
+    weatherRequester.output(this) { api ->
       when (api) {
         is Api.Loading -> states.loadingWeather.set(api.isLoading)
         is Api.GetWeatherInfo -> states.weather.set(api.live?.weather!!)
