@@ -35,27 +35,23 @@ class EditorFragment : BaseFragment() {
       .addBindingParam(BR.click, clickProxy)
   }
 
-  override fun onInitData() {
-    if (arguments != null) {
-      states.tempNote.set(requireArguments().getParcelable(NOTE)!!)
-      states.title.set(states.tempNote.get()?.title!!)
-      states.content.set(states.tempNote.get()?.content!!)
-      if (TextUtils.isEmpty(states.tempNote.get()?.id)) {
-        states.titleRequestFocus.set(true)
-      } else {
-        states.tip.set(getString(R.string.last_time_modify))
-        states.time.set(states.tempNote.get()?.modifyDate!!)
-      }
-    }
-  }
-
   /**
    * TODO tip 1：
    *  通过唯一出口 'dispatcher.output' 统一接收 '可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
    */
   override fun onOutput() {
     noteRequester.output(this) { noteEvent ->
-      if (noteEvent is NoteIntent.AddItem) {
+      if (noteEvent is NoteIntent.InitItem) {
+        states.tempNote.set(noteEvent.param?.copy()!!)
+        states.title.set(states.tempNote.get()?.title!!)
+        states.content.set(states.tempNote.get()?.content!!)
+        if (TextUtils.isEmpty(states.tempNote.get()?.id)) {
+          states.titleRequestFocus.set(true)
+        } else {
+          states.tip.set(getString(R.string.last_time_modify))
+          states.time.set(states.tempNote.get()?.modifyDate!!)
+        }
+      } else if (noteEvent is NoteIntent.AddItem) {
         messenger.input(Messages.RefreshNoteList)
         ToastUtils.showShortToast(getString(R.string.saved))
         nav().navigateUp()
@@ -69,6 +65,7 @@ class EditorFragment : BaseFragment() {
    */
   override fun onInput() {
     clickProxy.setOnClickListener { v -> if (v.id == R.id.btn_back) save() }
+    noteRequester.input(NoteIntent.InitItem(requireArguments().getParcelable(NOTE)!!))
   }
 
   private fun save() {

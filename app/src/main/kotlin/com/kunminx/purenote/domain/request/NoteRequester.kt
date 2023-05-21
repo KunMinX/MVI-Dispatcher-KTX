@@ -19,6 +19,7 @@ class NoteRequester : MviDispatcherKTX<NoteIntent>() {
    */
   override suspend fun onHandle(event: NoteIntent) {
     when (event) {
+      is NoteIntent.InitItem -> sendResult(event.copy())
       is NoteIntent.MarkItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
       is NoteIntent.UpdateItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
       is NoteIntent.AddItem -> sendResult(event.copy(isSuccess = DataRepository.insertNote(event.param!!)))

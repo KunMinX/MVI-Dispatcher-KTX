@@ -22,14 +22,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import com.kunminx.architecture.utils.AdaptScreenUtils
 
 /**
  * Create by KunMinX at 19/8/1
  */
 abstract class BaseActivity : DataBindingActivity() {
-  protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
 
@@ -39,7 +37,6 @@ abstract class BaseActivity : DataBindingActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     transparentStatusBar(this)
     super.onCreate(savedInstanceState)
-    onInitData()
     onOutput()
     onInput()
   }

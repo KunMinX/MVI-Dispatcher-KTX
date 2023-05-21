@@ -42,4 +42,8 @@ sealed class NoteIntent {
     val param: Note? = null,
     val isSuccess: Boolean = true
   ) : NoteIntent()
+
+  data class InitItem(
+    val param: Note? = null
+  ) : NoteIntent()
 }

@@ -28,7 +28,6 @@ import androidx.navigation.fragment.NavHostFragment
  * Create by KunMinX at 19/7/11
  */
 abstract class BaseFragment : DataBindingFragment() {
-  protected open fun onInitData() {}
   protected open fun onOutput() {}
   protected open fun onInput() {}
 
@@ -42,7 +41,6 @@ abstract class BaseFragment : DataBindingFragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    onInitData()
     onOutput()
     onInput()
   }
