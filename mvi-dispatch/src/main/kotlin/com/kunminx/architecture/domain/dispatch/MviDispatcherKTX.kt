@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 /**
  * Create by KunMinX at 2022/7/3
  */
-open class MviDispatcherKTX<T> : ViewModel(), DefaultLifecycleObserver {
+open class MviDispatcherKTX<T : Any> : ViewModel(), DefaultLifecycleObserver {
   private var version = START_VERSION
   private var currentVersion = START_VERSION
   private var observerCount = 0
@@ -33,33 +33,24 @@ open class MviDispatcherKTX<T> : ViewModel(), DefaultLifecycleObserver {
   }
 
   fun output(activity: AppCompatActivity?, observer: (T) -> Unit) {
-    currentVersion = version
-    observerCount++
-    activity?.lifecycle?.addObserver(this)
-    activity?.lifecycleScope?.launch {
-      activity.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        _sharedFlow.collect {
-          if (version > currentVersion) {
-            if (it.consumeCount >= observerCount) return@collect
-            it.consumeCount++
-            observer.invoke(it.value)
-          }
-        }
-      }
-    }
+    output(activity, observer)
   }
 
   fun output(fragment: Fragment?, observer: (T) -> Unit) {
+    output(fragment?.viewLifecycleOwner, observer)
+  }
+
+  private fun output(lifecycleOwner: LifecycleOwner?, observer: (T) -> Unit) {
     currentVersion = version
     observerCount++
-    fragment?.viewLifecycleOwner?.lifecycle?.addObserver(this)
-    fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
-      fragment.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+    lifecycleOwner?.lifecycle?.addObserver(this)
+    lifecycleOwner?.lifecycleScope?.launch {
+      lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
         _sharedFlow.collect {
           if (version > currentVersion) {
             if (it.consumeCount >= observerCount) return@collect
             it.consumeCount++
-            observer.invoke(it.value)
+            observer(it.value)
           }
         }
       }
