@@ -23,7 +23,8 @@ class MainActivity : BaseActivity() {
 
   /**
    * TODO tip 1：
-   *  通过唯一出口 'dispatcher.output' 统一接收 '可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
+   * 通过 PublishSubject 接收数据，并在唯一出口 output{ ... } 中响应数据的变化，
+   * 通过 BehaviorSubject 通知所绑定控件属性重新渲染，并为其兜住最后一次状态，
    */
   override fun onOutput() {
     messenger.output(this) {
@@ -42,7 +43,7 @@ class MainActivity : BaseActivity() {
 
   /**
    * TODO tip 2：
-   *  通过唯一入口 'dispatcher.input' 发消息至 "可信源"，由其内部统一处理业务逻辑和结果分发。
+   * 通过唯一入口 input() 发消息至 "可信源"，由其内部统一处理业务逻辑和结果分发。
    */
   override fun onInput() {
     super.onInput()
