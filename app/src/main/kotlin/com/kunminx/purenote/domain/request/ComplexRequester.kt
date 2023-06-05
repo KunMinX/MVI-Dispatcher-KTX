@@ -21,15 +21,15 @@ class ComplexRequester : MviDispatcherKTX<ComplexIntent>() {
    *  本组件通过封装，默使数据从 "领域层" 到 "表现层" 单向流动，
    *  消除 “mutable 样板代码 & mutable.emit 误用滥用 & repeatOnLifecycle + SharedFlow 错过时机” 等高频痛点。
    */
-  override suspend fun onHandle(event: ComplexIntent) {
-    when (event) {
+  override suspend fun onHandle(intent: ComplexIntent) {
+    when (intent) {
       //TODO tip 2: 定长队列，随取随用，绝不丢失事件
       // 此处通过 Flow 轮询模拟事件连发，可于 Logcat Debug 见输出
 
       is ComplexIntent.ResultTest1 -> _interval.collect { input(ComplexIntent.ResultTest4(it)) }
-      is ComplexIntent.ResultTest2 -> timer(1000).collect { sendResult(event) }
-      is ComplexIntent.ResultTest3 -> sendResult(event)
-      is ComplexIntent.ResultTest4 -> sendResult(event)
+      is ComplexIntent.ResultTest2 -> timer(1000).collect { sendResult(intent) }
+      is ComplexIntent.ResultTest3 -> sendResult(intent)
+      is ComplexIntent.ResultTest4 -> sendResult(intent)
     }
   }
 

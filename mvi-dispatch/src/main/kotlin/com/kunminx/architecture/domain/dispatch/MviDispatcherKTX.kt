@@ -16,11 +16,11 @@ import kotlinx.coroutines.launch
 /**
  * Create by KunMinX at 2022/7/3
  */
-open class MviDispatcherKTX<E> : ViewModel(), DefaultLifecycleObserver {
+open class MviDispatcherKTX<T> : ViewModel(), DefaultLifecycleObserver {
   private var version = START_VERSION
   private var currentVersion = START_VERSION
   private var observerCount = 0
-  private val _sharedFlow: MutableSharedFlow<ConsumeOnceValue<E>>? by lazy {
+  private val _sharedFlow: MutableSharedFlow<ConsumeOnceValue<T>> by lazy {
     MutableSharedFlow(
       onBufferOverflow = BufferOverflow.DROP_OLDEST,
       extraBufferCapacity = initQueueMaxLength(),
@@ -32,13 +32,13 @@ open class MviDispatcherKTX<E> : ViewModel(), DefaultLifecycleObserver {
     return DEFAULT_QUEUE_LENGTH
   }
 
-  fun output(activity: AppCompatActivity?, observer: (E) -> Unit) {
+  fun output(activity: AppCompatActivity?, observer: (T) -> Unit) {
     currentVersion = version
     observerCount++
     activity?.lifecycle?.addObserver(this)
     activity?.lifecycleScope?.launch {
       activity.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        _sharedFlow?.collect {
+        _sharedFlow.collect {
           if (version > currentVersion) {
             if (it.consumeCount >= observerCount) return@collect
             it.consumeCount++
@@ -49,13 +49,13 @@ open class MviDispatcherKTX<E> : ViewModel(), DefaultLifecycleObserver {
     }
   }
 
-  fun output(fragment: Fragment?, observer: (E) -> Unit) {
+  fun output(fragment: Fragment?, observer: (T) -> Unit) {
     currentVersion = version
     observerCount++
     fragment?.viewLifecycleOwner?.lifecycle?.addObserver(this)
     fragment?.viewLifecycleOwner?.lifecycleScope?.launch {
       fragment.viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        _sharedFlow?.collect {
+        _sharedFlow.collect {
           if (version > currentVersion) {
             if (it.consumeCount >= observerCount) return@collect
             it.consumeCount++
@@ -71,20 +71,20 @@ open class MviDispatcherKTX<E> : ViewModel(), DefaultLifecycleObserver {
     observerCount--
   }
 
-  protected suspend fun sendResult(event: E) {
+  protected suspend fun sendResult(intent: T) {
     version++
-    _sharedFlow?.emit(ConsumeOnceValue(value = event))
+    _sharedFlow.emit(ConsumeOnceValue(value = intent))
   }
 
-  fun input(event: E) {
-    viewModelScope.launch { onHandle(event) }
+  fun input(intent: T) {
+    viewModelScope.launch { onHandle(intent) }
   }
 
-  protected open suspend fun onHandle(event: E) {}
+  protected open suspend fun onHandle(intent: T) {}
 
-  data class ConsumeOnceValue<E>(
+  private data class ConsumeOnceValue<T>(
     var consumeCount: Int = 0,
-    val value: E
+    val value: T
   )
 
   companion object {

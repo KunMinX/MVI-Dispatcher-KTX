@@ -26,16 +26,16 @@ class MainActivity : BaseActivity() {
    *  通过唯一出口 'dispatcher.output' 统一接收 '可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
    */
   override fun onOutput() {
-    messenger.output(this) { messages ->
-      if (messages is Messages.FinishActivity) finish()
+    messenger.output(this) {
+      if (it is Messages.FinishActivity) finish()
     }
 
-    complexRequester.output(this) { complexEvent ->
-      when (complexEvent) {
+    complexRequester.output(this) {
+      when (it) {
         is ComplexIntent.ResultTest1 -> Log.d("complexEvent", "---1")
         is ComplexIntent.ResultTest2 -> Log.d("complexEvent", "---2")
         is ComplexIntent.ResultTest3 -> Log.d("complexEvent", "---3")
-        is ComplexIntent.ResultTest4 -> Log.d("complexEvent", "---4 " + complexEvent.count)
+        is ComplexIntent.ResultTest4 -> Log.d("complexEvent", "---4 " + it.count)
       }
     }
   }

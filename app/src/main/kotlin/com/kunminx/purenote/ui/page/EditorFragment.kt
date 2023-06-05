@@ -40,9 +40,9 @@ class EditorFragment : BaseFragment() {
    *  通过唯一出口 'dispatcher.output' 统一接收 '可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
    */
   override fun onOutput() {
-    noteRequester.output(this) { noteEvent ->
-      if (noteEvent is NoteIntent.InitItem) {
-        states.tempNote.set(noteEvent.param?.copy()!!)
+    noteRequester.output(this) {
+      if (it is NoteIntent.InitItem) {
+        states.tempNote.set(it.param?.copy()!!)
         states.title.set(states.tempNote.get()?.title!!)
         states.content.set(states.tempNote.get()?.content!!)
         if (TextUtils.isEmpty(states.tempNote.get()?.id)) {
@@ -51,7 +51,7 @@ class EditorFragment : BaseFragment() {
           states.tip.set(getString(R.string.last_time_modify))
           states.time.set(states.tempNote.get()?.modifyDate!!)
         }
-      } else if (noteEvent is NoteIntent.AddItem) {
+      } else if (it is NoteIntent.AddItem) {
         messenger.input(Messages.RefreshNoteList)
         ToastUtils.showShortToast(getString(R.string.saved))
         nav().navigateUp()

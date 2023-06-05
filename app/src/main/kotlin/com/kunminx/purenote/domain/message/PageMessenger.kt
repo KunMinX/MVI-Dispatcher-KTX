@@ -15,8 +15,8 @@ class PageMessenger : MviDispatcherKTX<Messages>() {
    *  本组件通过封装，默使数据从 "领域层" 到 "表现层" 单向流动，
    *  消除 “mutable 样板代码 & mutable.emit 误用滥用 & repeatOnLifecycle + SharedFlow 错过时机” 等高频痛点。
    */
-  override suspend fun onHandle(event: Messages) {
-    sendResult(event)
+  override suspend fun onHandle(messages: Messages) {
+    sendResult(messages)
 
     // TODO：tip 2：除接收来自 Activity/Fragment 的事件，亦可从 Dispatcher 内部发送事件（作为副作用）：
     //  ~

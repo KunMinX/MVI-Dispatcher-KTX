@@ -14,8 +14,8 @@ import com.kunminx.purenote.domain.intent.Api
 import com.kunminx.purenote.domain.intent.Messages
 import com.kunminx.purenote.domain.intent.NoteIntent
 import com.kunminx.purenote.domain.message.PageMessenger
-import com.kunminx.purenote.domain.request.WeatherRequester
 import com.kunminx.purenote.domain.request.NoteRequester
+import com.kunminx.purenote.domain.request.WeatherRequester
 import com.kunminx.purenote.ui.adapter.NoteAdapter
 
 /**
@@ -40,13 +40,13 @@ class ListFragment : BaseFragment() {
    *  通过唯一出口 'dispatcher.output' 统一接收 '可信源' 回推之消息，根据 id 分流处理 UI 逻辑。
    */
   override fun onOutput() {
-    messenger.output(this) { messages ->
-      if (messages is Messages.RefreshNoteList) noteRequester.input(NoteIntent.GetNoteList())
+    messenger.output(this) {
+      if (it is Messages.RefreshNoteList) noteRequester.input(NoteIntent.GetNoteList())
     }
-    noteRequester.output(this) { noteEvent ->
-      when (noteEvent) {
+    noteRequester.output(this) {
+      when (it) {
         is NoteIntent.GetNoteList -> {
-          adapter.refresh(noteEvent.notes!!)
+          adapter.refresh(it.notes!!)
           states.emptyViewShow.set(states.list.isEmpty())
         }
         is NoteIntent.ToppingItem -> {}
@@ -55,10 +55,10 @@ class ListFragment : BaseFragment() {
         else -> {}
       }
     }
-    weatherRequester.output(this) { api ->
-      when (api) {
-        is Api.Loading -> states.loadingWeather.set(api.isLoading)
-        is Api.GetWeatherInfo -> states.weather.set(api.live?.weather!!)
+    weatherRequester.output(this) {
+      when (it) {
+        is Api.Loading -> states.loadingWeather.set(it.isLoading)
+        is Api.GetWeatherInfo -> states.weather.set(it.live?.weather!!)
         is Api.Error -> {}
       }
     }

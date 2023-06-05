@@ -16,17 +16,17 @@ class WeatherRequester : MviDispatcherKTX<Api>() {
    *  本组件通过封装，默使数据从 "领域层" 到 "表现层" 单向流动，
    *  消除 “mutable 样板代码 & mutable.emit 误用滥用 & repeatOnLifecycle + SharedFlow 错过时机” 等高频痛点。
    */
-  override suspend fun onHandle(event: Api) {
-    when (event) {
-      is Api.Loading -> sendResult(event)
+  override suspend fun onHandle(intent: Api) {
+    when (intent) {
+      is Api.Loading -> sendResult(intent)
       is Api.GetWeatherInfo -> {
         input(Api.Loading(true))
-        val result = DataRepository.getWeatherInfo(Api.GET_WEATHER_INFO, event.param)
-        if (result.second.isEmpty()) sendResult(event.copy(live = result.first))
+        val result = DataRepository.getWeatherInfo(Api.GET_WEATHER_INFO, intent.param)
+        if (result.second.isEmpty()) sendResult(intent.copy(live = result.first))
         else input(Api.Error(result.second))
         input(Api.Loading(false))
       }
-      is Api.Error -> sendResult(event)
+      is Api.Error -> sendResult(intent)
     }
   }
 }

@@ -17,16 +17,16 @@ class NoteRequester : MviDispatcherKTX<NoteIntent>() {
    *  本组件通过封装，默使数据从 "领域层" 到 "表现层" 单向流动，
    *  消除 “mutable 样板代码 & mutable.emit 误用滥用 & repeatOnLifecycle + SharedFlow 错过时机” 等高频痛点。
    */
-  override suspend fun onHandle(event: NoteIntent) {
-    when (event) {
-      is NoteIntent.InitItem -> sendResult(event.copy())
-      is NoteIntent.MarkItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
-      is NoteIntent.UpdateItem -> sendResult(event.copy(isSuccess = DataRepository.updateNote(event.param!!)))
-      is NoteIntent.AddItem -> sendResult(event.copy(isSuccess = DataRepository.insertNote(event.param!!)))
-      is NoteIntent.RemoveItem -> sendResult(event.copy(isSuccess = DataRepository.deleteNote(event.param!!)))
-      is NoteIntent.GetNoteList -> sendResult(event.copy(DataRepository.getNotes().firstOrNull()))
+  override suspend fun onHandle(intent: NoteIntent) {
+    when (intent) {
+      is NoteIntent.InitItem -> sendResult(intent.copy())
+      is NoteIntent.MarkItem -> sendResult(intent.copy(isSuccess = DataRepository.updateNote(intent.param!!)))
+      is NoteIntent.UpdateItem -> sendResult(intent.copy(isSuccess = DataRepository.updateNote(intent.param!!)))
+      is NoteIntent.AddItem -> sendResult(intent.copy(isSuccess = DataRepository.insertNote(intent.param!!)))
+      is NoteIntent.RemoveItem -> sendResult(intent.copy(isSuccess = DataRepository.deleteNote(intent.param!!)))
+      is NoteIntent.GetNoteList -> sendResult(intent.copy(DataRepository.getNotes().firstOrNull()))
       is NoteIntent.ToppingItem -> {
-        val success = DataRepository.updateNote(event.param!!)
+        val success = DataRepository.updateNote(intent.param!!)
         if (success) sendResult(NoteIntent.GetNoteList(DataRepository.getNotes().firstOrNull()))
       }
     }
