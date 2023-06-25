@@ -33,14 +33,14 @@ open class MviDispatcherKTX<T : Any> : ViewModel(), DefaultLifecycleObserver {
   }
 
   fun output(activity: AppCompatActivity?, observer: (T) -> Unit) {
-    output(activity, observer)
+    outputTo(activity, observer)
   }
 
   fun output(fragment: Fragment?, observer: (T) -> Unit) {
-    output(fragment?.viewLifecycleOwner, observer)
+    outputTo(fragment?.viewLifecycleOwner, observer)
   }
 
-  private fun output(lifecycleOwner: LifecycleOwner?, observer: (T) -> Unit) {
+  private fun outputTo(lifecycleOwner: LifecycleOwner?, observer: (T) -> Unit) {
     currentVersion = version
     observerCount++
     lifecycleOwner?.lifecycle?.addObserver(this)

@@ -33,7 +33,7 @@ MVI-Dispatcher 应运而生。
 在本案例中，我将为您展示，MVI-Dispatcher 是如何将原本 "繁杂易出错" 消息分发流程，通过 **寥寥几行代码** 轻而易举完成。
 
 ```Groovy
-implementation 'com.kunminx.arch:mvi-dispatch-ktx:7.2.0'
+implementation 'com.kunminx.arch:mvi-dispatch-ktx:7.3.0'
 ```
 
 &nbsp;
@@ -94,7 +94,7 @@ MVI-Dispatcher 应运而生，
 
 # Thanks to
 
-感谢小伙伴苏旗的测试反馈和协助排查
+感谢小伙伴苏旗、YJH 的测试反馈
 
 [AndroidX](https://developer.android.google.cn/jetpack/androidx)
 
