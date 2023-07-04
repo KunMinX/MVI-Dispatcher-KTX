@@ -2,8 +2,8 @@ buildscript {
   ext {
     appTargetSdk = 32
     appMinSdk = 15
-    appVersionCode = 703000
-    appVersionName = "7.3.0"
+    appVersionCode = 704000
+    appVersionName = "7.4.0"
     room_version = '2.4.3'
   }
 }
