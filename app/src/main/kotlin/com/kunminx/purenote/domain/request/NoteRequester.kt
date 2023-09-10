@@ -3,7 +3,6 @@ package com.kunminx.purenote.domain.request
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.data.repo.DataRepository
 import com.kunminx.purenote.domain.intent.NoteIntent
-import kotlinx.coroutines.flow.firstOrNull
 
 /**
  * TODO tip 1：让 UI 和业务分离，让数据总是从生产者流向消费者
@@ -28,14 +27,26 @@ class NoteRequester : MviDispatcherKTX<NoteIntent>() {
   override suspend fun onHandle(intent: NoteIntent) {
     when (intent) {
       is NoteIntent.InitItem -> sendResult(intent.copy())
-      is NoteIntent.MarkItem -> sendResult(intent.copy(isSuccess = DataRepository.updateNote(intent.param!!)))
-      is NoteIntent.UpdateItem -> sendResult(intent.copy(isSuccess = DataRepository.updateNote(intent.param!!)))
-      is NoteIntent.AddItem -> sendResult(intent.copy(isSuccess = DataRepository.insertNote(intent.param!!)))
-      is NoteIntent.RemoveItem -> sendResult(intent.copy(isSuccess = DataRepository.deleteNote(intent.param!!)))
-      is NoteIntent.GetNoteList -> sendResult(intent.copy(DataRepository.getNotes().firstOrNull()))
+
+      is NoteIntent.MarkItem -> DataRepository.updateNote(intent.param!!)
+        .collect { sendResult(intent.copy(isSuccess = it)) }
+
+      is NoteIntent.UpdateItem -> DataRepository.updateNote(intent.param!!)
+        .collect { sendResult(intent.copy(isSuccess = it)) }
+
+      is NoteIntent.AddItem -> DataRepository.insertNote(intent.param!!)
+        .collect { sendResult(intent.copy(isSuccess = it)) }
+
+      is NoteIntent.RemoveItem -> DataRepository.deleteNote(intent.param!!)
+        .collect { sendResult(intent.copy(isSuccess = it)) }
+
+      is NoteIntent.GetNoteList -> DataRepository.getNotes()
+        .collect { sendResult(intent.copy(it.notes)) }
+
       is NoteIntent.ToppingItem -> {
-        val success = DataRepository.updateNote(intent.param!!)
-        if (success) sendResult(NoteIntent.GetNoteList(DataRepository.getNotes().firstOrNull()))
+        DataRepository.updateNote(intent.param!!).collect {
+          if (it) DataRepository.getNotes().collect { sendResult(NoteIntent.GetNoteList(it.notes)) }
+        }
       }
     }
   }

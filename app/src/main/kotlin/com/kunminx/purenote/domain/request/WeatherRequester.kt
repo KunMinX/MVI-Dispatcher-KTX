@@ -2,6 +2,7 @@ package com.kunminx.purenote.domain.request
 
 import com.kunminx.architecture.domain.dispatch.MviDispatcherKTX
 import com.kunminx.purenote.data.repo.DataRepository
+import com.kunminx.purenote.data.repo.RepoResult
 import com.kunminx.purenote.domain.intent.Api
 
 /**
@@ -29,9 +30,10 @@ class WeatherRequester : MviDispatcherKTX<Api>() {
       is Api.Loading -> sendResult(intent)
       is Api.GetWeatherInfo -> {
         input(Api.Loading(true))
-        val result = DataRepository.getWeatherInfo(Api.GET_WEATHER_INFO, intent.param)
-        if (result.second.isEmpty()) sendResult(intent.copy(live = result.first))
-        else input(Api.Error(result.second))
+        DataRepository.getWeatherInfo(Api.GET_WEATHER_INFO, intent.param).collect {
+          if (it is RepoResult.WeatherInfo) sendResult(intent.copy(live = it.live))
+          else if (it is RepoResult.Error) input(Api.Error(it.msg))
+        }
         input(Api.Loading(false))
       }
       is Api.Error -> sendResult(intent)

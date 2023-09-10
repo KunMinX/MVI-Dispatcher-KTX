@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteDao {
   @Query("select * from note order by type & 0x0001 = 0x0001 desc, modify_time desc")
-  fun notes(): Flow<List<Note>>
+  fun notes(): List<Note>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   fun insertNote(note: Note)

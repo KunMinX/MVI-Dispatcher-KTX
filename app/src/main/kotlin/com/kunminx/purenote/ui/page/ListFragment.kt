@@ -37,8 +37,9 @@ class ListFragment : BaseFragment() {
 
   /**
    * TODO tip 1：
-   * 通过 PublishSubject 接收数据，并在唯一出口 output{ ... } 中响应数据的变化，
-   * 通过 BehaviorSubject 通知所绑定控件属性重新渲染，并为其兜住最后一次状态，
+   * 在 PublishSubject 的唯一出口 output{ ... } 中响应数据的变化，
+   * 对于一次性事件，直接执行，
+   * 对于状态数据，通过 BehaviorSubject 通知所绑定控件属性重新渲染，并为其兜住最后一次状态，
    */
   override fun onOutput() {
     messenger.output(this) {
