@@ -1,5 +1,7 @@
 package com.kunminx.purenote.ui.page
 
+import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableField
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.kunminx.architecture.ui.bind.ClickProxy
@@ -103,7 +105,7 @@ class ListFragment : BaseFragment() {
    * https://juejin.cn/post/7134594010642907149
    */
   class ListStates : StateHolder() {
-    val list = mutableListOf<Note>()
+    val list = ObservableArrayList<Note>()
     val emptyViewShow = State(false)
     val loadingWeather = State(false)
     val weather = State("")

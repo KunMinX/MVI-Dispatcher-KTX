@@ -101,11 +101,11 @@ class EditorFragment : BaseFragment() {
    * https://juejin.cn/post/7134594010642907149
    */
   class EditorStates : StateHolder() {
-    val tempNote = State<Note>(Note())
+    val tempNote = State(Note())
     val title = State("")
     val content = State("")
-    val tip: State<String> = State(Utils.app?.getString(R.string.edit)!!)
-    val time: State<String> = State(Utils.app?.getString(R.string.new_note)!!)
+    val tip = State(Utils.app?.getString(R.string.edit)!!)
+    val time = State(Utils.app?.getString(R.string.new_note)!!)
     val titleRequestFocus = State(false)
   }
 
