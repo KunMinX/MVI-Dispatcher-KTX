@@ -34,10 +34,10 @@ class MainActivity : BaseActivity() {
 
     complexRequester.output(this) {
       when (it) {
-        is ComplexIntent.ResultTest1 -> Log.d("complexEvent", "---1")
-        is ComplexIntent.ResultTest2 -> Log.d("complexEvent", "---2")
-        is ComplexIntent.ResultTest3 -> Log.d("complexEvent", "---3")
-        is ComplexIntent.ResultTest4 -> Log.d("complexEvent", "---4 " + it.count)
+        is ComplexIntent.ResultTest1 -> Log.i("complexEvent", "---1")
+        is ComplexIntent.ResultTest2 -> Log.i("complexEvent", "---2")
+        is ComplexIntent.ResultTest3 -> Log.i("complexEvent", "---3")
+        is ComplexIntent.ResultTest4 -> Log.i("complexEvent", "---4 " + it.count)
       }
     }
   }
