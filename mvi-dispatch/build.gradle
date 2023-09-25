@@ -1,47 +1,47 @@
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
+  id 'com.android.library'
+  id 'kotlin-android'
 }
 
 ext {
-    PUBLISH_GROUP_ID = 'com.kunminx.arch'
-    PUBLISH_ARTIFACT_ID = 'mvi-dispatch-ktx'
-    PUBLISH_VERSION = appVersionName
-    VERSION_CODE = appVersionCode
+  PUBLISH_GROUP_ID = 'com.kunminx.arch'
+  PUBLISH_ARTIFACT_ID = 'mvi-dispatch-ktx'
+  PUBLISH_VERSION = appVersionName
+  VERSION_CODE = appVersionCode
 
-    ARTIFACT_DESCRIPTION = 'Jetpack Only Source of Truth Library for android'
+  ARTIFACT_DESCRIPTION = 'Jetpack Only Source of Truth Library for android'
 
-    POM_URL = 'https://github.com/KunMinX/Jetpack-MVI-Best-Practice'
-    POM_SCM_URL = 'https://github.com/KunMinX/Jetpack-MVI-Best-Practice/tree/master'
-    POM_SCM_CONNECTION = 'scm:git:github.com/KunMinX/Jetpack-MVI-Best-Practice.git'
-    POM_SCM_DEV_CONNECTION = 'scm:git:ssh://github.com/KunMinX/Jetpack-MVI-Best-Practice.git'
+  POM_URL = 'https://github.com/KunMinX/Jetpack-MVI-Best-Practice'
+  POM_SCM_URL = 'https://github.com/KunMinX/Jetpack-MVI-Best-Practice/tree/master'
+  POM_SCM_CONNECTION = 'scm:git:github.com/KunMinX/Jetpack-MVI-Best-Practice.git'
+  POM_SCM_DEV_CONNECTION = 'scm:git:ssh://github.com/KunMinX/Jetpack-MVI-Best-Practice.git'
 
-    POM_DEVELOPER_ID = 'KunMinX'
-    POM_DEVELOPER_NAME = 'KunMinX'
-    POM_DEVELOPER_URL = 'https://github.com/KunMinX'
-    POM_DEVELOPER_EMAIL = 'kunminx@gmail.com'
+  POM_DEVELOPER_ID = 'KunMinX'
+  POM_DEVELOPER_NAME = 'KunMinX'
+  POM_DEVELOPER_URL = 'https://github.com/KunMinX'
+  POM_DEVELOPER_EMAIL = 'kunminx@gmail.com'
 
-    LICENSE_NAME = 'The Apache Software License, Version 2.0'
-    LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+  LICENSE_NAME = 'The Apache Software License, Version 2.0'
+  LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 
-    uploadJavadocs = false
-    uploadSources = false
+  uploadJavadocs = false
+  uploadSources = false
 }
 
 apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
 
 android {
-    compileSdk appTargetSdk
-    namespace "com.kunminx.dispatch"
-    defaultConfig {
-        minSdk appMinSdk
-        targetSdk appTargetSdk
-        versionCode appVersionCode
-        versionName appVersionName
+  compileSdk appTargetSdk
+  namespace "com.kunminx.dispatchktx"
+  defaultConfig {
+    minSdk appMinSdk
+    targetSdk appTargetSdk
+    versionCode appVersionCode
+    versionName appVersionName
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    consumerProguardFiles "consumer-rules.pro"
+  }
 
     buildTypes {
         release {
