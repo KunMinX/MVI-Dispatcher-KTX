@@ -48,9 +48,10 @@ open class MviDispatcherKTX<T : Any> : ViewModel(), DefaultLifecycleObserver {
       lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
         _sharedFlow.collect {
           if (version > currentVersion) {
-            if (it.consumeCount >= observerCount) return@collect
-            it.consumeCount++
+            if (it.isAllConsumed) return@collect
+            ++it.consumeCount
             observer(it.value)
+            if (it.consumeCount == observerCount) it.isAllConsumed = true
           }
         }
       }
@@ -75,6 +76,7 @@ open class MviDispatcherKTX<T : Any> : ViewModel(), DefaultLifecycleObserver {
 
   private data class ConsumeOnceValue<T>(
     var consumeCount: Int = 0,
+    var isAllConsumed: Boolean = false,
     val value: T
   )
 
